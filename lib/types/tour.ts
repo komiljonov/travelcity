@@ -32,4 +32,6 @@ export interface ITour {
 
   kids_allowed: boolean;
   infants_allowed: boolean;
+
+  recommended_tours: ITour[];
 }

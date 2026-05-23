@@ -7,3 +7,8 @@ export const getTourMedia = async (
   const { data } = await api.get(`/v1/media/?tour=${tour}`);
   return data;
 };
+
+export const getAllMedia = async (): Promise<IMedia[]> => {
+  const { data } = await api.get(`/v1/media/`);
+  return data;
+};

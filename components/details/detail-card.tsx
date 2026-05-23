@@ -3,7 +3,8 @@ import FeatureCard from "../ui/featurecard";
 
 export default function DetailCard({ tour }: { tour: ITour }) {
   // const recommended = cities.filter((c) => c.slug !== tour.slug).slice(0, 4);
-  const recommended = [tour, tour, tour];
+  // const recommended = [tour, tour, tour];
+
   return (
     <div className="max-w-7xl m-auto w-full min-w-0">
       <div className="mt-24">
@@ -21,7 +22,7 @@ export default function DetailCard({ tour }: { tour: ITour }) {
       </div> */}
 
       <div className="grid grid-cols-4 gap-5 mb-8 mt-6 max-md:flex max-md:flex-col max-md:items-stretch">
-        {recommended.map((c) => (
+        {tour.recommended_tours.map((c) => (
           <FeatureCard key={c.id} tour={c} />
         ))}
       </div>

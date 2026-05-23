@@ -1,7 +1,7 @@
 "use client";
-import { cities } from "@/lib/cities";
+// import { cities } from "@/lib/cities";
 import { motion } from "framer-motion";
-import FeatureCard from "../ui/featurecard";
+// import FeatureCard from "../ui/featurecard";
 
 export default function Recomedtion() {
   const container = {
@@ -53,11 +53,11 @@ export default function Recomedtion() {
         gap-5
       "
         >
-          {cities.slice(0, 4).map((city) => (
+          {/* {cities.slice(0, 4).map((city) => (
             <motion.div key={city.slug} variants={item}>
               <FeatureCard tour={city} />
             </motion.div>
-          ))}
+          ))} */}
         </div>
       </motion.div>
     </div>

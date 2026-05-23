@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaChevronDown } from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
-import Link from "next/link";
 import { Images } from "lucide-react";
 import { ITour } from "@type/tour";
 import { useQuery } from "@tanstack/react-query";
 import { getTourMedia } from "@/lib/api/media";
 
 import { useForm, useWatch } from "react-hook-form";
+import { useRouter, usePathname } from "next/navigation";
 
 type FormValues = {
   date: Date | null;
@@ -24,6 +25,10 @@ type FormValues = {
 };
 
 export default function CityDetailWidget({ tour }: { tour: ITour }) {
+  const pathname = usePathname();
+
+  const router = useRouter();
+
   const { data: images } = useQuery({
     queryKey: ["images", tour.id],
     queryFn: async () => await getTourMedia(tour.id),
@@ -34,15 +39,6 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
   const [openPanel, setOpenPanel] = useState<"guests" | "date" | "lang" | null>(
     null
   );
-
-  // const [date, setDate] = useState<Date | null>(null);
-
-  // const [adult, setAdult] = useState(1);
-  // const [child, setChild] = useState(0);
-  // const [infant, setInfant] = useState(0);
-
-  // Booking language is independent from i18n site language.
-  // const [selectedTourLanguage, setSelectedTourLanguage] = useState("uz");
 
   const { setValue, handleSubmit, control } = useForm<FormValues>({
     defaultValues: {
@@ -61,6 +57,17 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
   const infant = useWatch({ control, name: "infant" });
   const language = useWatch({ control, name: "language" });
 
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (date) params.set("date", date.toISOString().split("T")[0]);
+    params.set("adult", String(adult));
+    params.set("child", String(child));
+    params.set("infant", String(infant));
+    params.set("language", language);
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [router, pathname, date, adult, child, infant, language]);
+
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
 
@@ -74,9 +81,15 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
   }
 
   function onSubmit(data: FormValues) {
-    console.log(data); // date, adult, child, infant, language all here
+    const params = new URLSearchParams({
+      date: data.date ? data.date.toISOString().split("T")[0] : "",
+      adult: String(data.adult),
+      child: String(data.child),
+      infant: String(data.infant),
+      language: data.language,
+    });
+    router.push(`/check/${tour.id}?${params.toString()}`);
   }
-
   // function handleSubmit() {}
 
   return (
@@ -467,17 +480,17 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
             </div>
           </div>
 
-          <Link href="/check" className="flex-none pt-3">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full bg-[#EA004A] text-white text-sm font-semibold py-3.5 rounded-full"
-              // onClick={handleSubmit}
-              onClick={handleSubmit(onSubmit)}
-            >
-              Check availability
-            </motion.button>
-          </Link>
+          {/* <Link href="/check" className="flex-none pt-3"> */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full bg-[#EA004A] text-white text-sm font-semibold py-3.5 rounded-full"
+            // onClick={handleSubmit}
+            onClick={handleSubmit(onSubmit)}
+          >
+            Check availability
+          </motion.button>
+          {/* </Link> */}
         </div>
       </div>
 

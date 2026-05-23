@@ -1,57 +1,60 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import React, { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
-
-const images = [
-  { src: '/sec2.png', width: 256, height: 256 },
-  { src: '/sec2.png', width: 256, height: 256 },
-  { src: '/sec2.png', width: 532, height: 400 },
-  { src: '/sec2.png', width: 305, height: 328 },
-  { src: '/sec2.png', width: 305, height: 328 },
-  { src: '/sec2.png', width: 403, height: 222 },
-  { src: '/sec2.png', width: 191, height: 191 },
-  { src: '/sec2.png', width: 191, height: 191 },
-  { src: '/sec2.png', width: 403, height: 222 },
-]
+import Image from "next/image";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getAllMedia } from "@/lib/api/media";
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { when: 'beforeChildren', staggerChildren: 0.12 } },
-}
+  visible: {
+    opacity: 1,
+    transition: { when: "beforeChildren", staggerChildren: 0.12 },
+  },
+};
 
 const imageVariants = {
   hidden: { opacity: 0, y: -60 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
-}
+};
+function Lightbox({
+  index,
+  images,
+  onClose,
+}: {
+  index: number;
+  images: { src: string }[];
+  onClose: () => void;
+}) {
+  const [current, setCurrent] = useState(index);
+  const [fading, setFading] = useState(false);
 
-function Lightbox({ index, onClose }: { index: number; onClose: () => void }) {
-  const [current, setCurrent] = useState(index)
-  const [fading, setFading] = useState(false)
-
-  const goTo = useCallback((next: number) => {
-    setFading(true)
-    setTimeout(() => {
-      setCurrent((next + images.length) % images.length)
-      setFading(false)
-    }, 200)
-  }, [])
+  const goTo = useCallback(
+    (next: number) => {
+      setFading(true);
+      setTimeout(() => {
+        setCurrent((next + images.length) % images.length);
+        setFading(false);
+      }, 200);
+    },
+    [images.length]
+  );
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') goTo(current + 1)
-      if (e.key === 'ArrowLeft') goTo(current - 1)
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', handler)
-    document.body.style.overflow = 'hidden'
+      if (e.key === "ArrowRight") goTo(current + 1);
+      if (e.key === "ArrowLeft") goTo(current - 1);
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
     return () => {
-      window.removeEventListener('keydown', handler)
-      document.body.style.overflow = ''
-    }
-  }, [current, goTo, onClose])
+      window.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [current, goTo, onClose]);
 
   return (
     <AnimatePresence>
@@ -72,13 +75,14 @@ function Lightbox({ index, onClose }: { index: number; onClose: () => void }) {
 
         {/* Counter */}
         <p className="absolute top-6 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium tracking-widest z-20">
-          <span className="text-white font-semibold">{current + 1}</span> / {images.length}
+          <span className="text-white font-semibold">{current + 1}</span> /{" "}
+          {images.length}
         </p>
 
         {/* Main content */}
         <div
           className="relative flex items-center justify-center w-full h-full px-20"
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Prev */}
           <button
@@ -88,23 +92,24 @@ function Lightbox({ index, onClose }: { index: number; onClose: () => void }) {
             <ChevronLeft size={24} className="text-white" />
           </button>
 
-          {/* Image — to'liq ekranga yaqin */}
+          {/* Image */}
           <div
-            className={`transition-opacity duration-200 flex items-center justify-center ${fading ? 'opacity-0' : 'opacity-100'}`}
-            style={{ maxWidth: '85vw', maxHeight: '88vh' }}
+            className={`relative transition-opacity duration-200 ${
+              fading ? "opacity-0" : "opacity-100"
+            }`}
+            style={{
+              maxWidth: "85vw",
+              maxHeight: "88vh",
+              width: "85vw",
+              height: "88vh",
+            }}
           >
-            <img
+            <Image
               src={images[current].src}
               alt={`gallery ${current + 1}`}
-              style={{
-                maxWidth: '85vw',
-                maxHeight: '88vh',
-                width: 'auto',
-                height: 'auto',
-                objectFit: 'contain',
-                borderRadius: '12px',
-                boxShadow: '0 25px 80px rgba(0,0,0,0.8)',
-              }}
+              fill
+              className="object-contain rounded-xl"
+              style={{ boxShadow: "0 25px 80px rgba(0,0,0,0.8)" }}
             />
           </div>
 
@@ -116,16 +121,58 @@ function Lightbox({ index, onClose }: { index: number; onClose: () => void }) {
             <ChevronRight size={24} className="text-white" />
           </button>
         </div>
+
+        {/* Thumbnail strip */}
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2 z-20 max-w-[90vw] overflow-x-auto px-4 pb-1">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={(e) => {
+                e.stopPropagation();
+                goTo(i);
+              }}
+              className={`relative flex-none w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
+                i === current
+                  ? "border-white opacity-100"
+                  : "border-transparent opacity-40 hover:opacity-70"
+              }`}
+            >
+              <Image
+                src={img.src}
+                alt={`thumb ${i + 1}`}
+                fill
+                className="object-cover"
+              />
+            </button>
+          ))}
+        </div>
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }
 
 export default function Gallery() {
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const ImgBox = ({ index, className, width, height, alt }: {
-    index: number; className?: string; width: number; height: number; alt: string
+  const { data } = useQuery({
+    queryKey: ["all_media"],
+    queryFn: getAllMedia,
+  });
+
+  const images = (data ?? []).map((item) => ({ src: item.media }));
+
+  const ImgBox = ({
+    index,
+    className,
+    width,
+    height,
+    alt,
+  }: {
+    index: number;
+    className?: string;
+    width: number;
+    height: number;
+    alt: string;
   }) => (
     <motion.div
       className={`relative rounded-[20px] overflow-hidden cursor-pointer group ${className}`}
@@ -145,7 +192,7 @@ export default function Gallery() {
         </div>
       </div>
     </motion.div>
-  )
+  );
 
   return (
     <>
@@ -157,42 +204,63 @@ export default function Gallery() {
           </p>
         </div>
 
-        <motion.div
-          className="flex flex-col md:flex-row gap-5 mt-20"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Col 1 */}
-          <motion.div className="flex flex-col gap-5" variants={imageVariants}>
-            <div className="flex gap-5 max-md:flex-col">
-              <ImgBox index={0} className="w-[256px] h-[256px] max-md:w-full max-md:h-[220px]" width={256} height={256} alt="gallery 1" />
-              <ImgBox index={1} className="w-[256px] h-[256px] max-md:w-full max-md:h-[220px]" width={256} height={256} alt="gallery 2" />
-            </div>
-            <ImgBox index={2} className="w-[532px] h-[400px] max-md:w-full max-md:h-[260px]" width={532} height={400} alt="gallery 3" />
-          </motion.div>
+        {/* Split images into 3 columns */}
+        {(() => {
+          const col1 = images.filter((_, i) => i % 3 === 0);
+          const col2 = images.filter((_, i) => i % 3 === 1);
+          const col3 = images.filter((_, i) => i % 3 === 2);
 
-          {/* Col 2 */}
-          <motion.div className="flex flex-col gap-5" variants={imageVariants}>
-            <ImgBox index={3} className="w-[305px] h-[328px] max-md:w-full max-md:h-[240px]" width={305} height={328} alt="gallery 4" />
-            <ImgBox index={4} className="w-[305px] h-[328px] max-md:w-full max-md:h-[240px]" width={305} height={328} alt="gallery 5" />
-          </motion.div>
+          const renderCol = (colImages: typeof images, colOffset: number) => (
+            <motion.div
+              className="flex flex-col gap-5 flex-1"
+              variants={imageVariants}
+            >
+              {colImages.map((img, i) => (
+                <motion.div
+                  key={i}
+                  className="relative w-full rounded-[20px] overflow-hidden cursor-pointer group"
+                  style={{ aspectRatio: i % 2 === 0 ? "4/3" : "1/1" }}
+                  variants={imageVariants}
+                  onClick={() => setLightboxIndex(colOffset + i * 3)}
+                >
+                  <Image
+                    src={img.src}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    alt={`gallery ${colOffset + i * 3 + 1}`}
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-all duration-300 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-black/50 border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm">
+                      <ZoomIn size={16} className="text-white" />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          );
 
-          {/* Col 3 */}
-          <motion.div className="flex flex-col gap-5" variants={imageVariants}>
-            <ImgBox index={5} className="w-[403px] h-[222px] max-md:w-full max-md:h-[200px]" width={403} height={222} alt="gallery 6" />
-            <div className="flex gap-5 max-md:flex-col">
-              <ImgBox index={6} className="w-[191.5px] h-[191.5px] max-md:w-full max-md:h-[190px]" width={191} height={191} alt="gallery 7" />
-              <ImgBox index={7} className="w-[191.5px] h-[191.5px] max-md:w-full max-md:h-[190px]" width={191} height={191} alt="gallery 8" />
-            </div>
-            <ImgBox index={8} className="w-[403px] h-[222px] max-md:w-full max-md:h-[200px]" width={403} height={222} alt="gallery 9" />
-          </motion.div>
-        </motion.div>
+          return (
+            <motion.div
+              className="flex flex-col md:flex-row gap-5 mt-10"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {renderCol(col1, 0)}
+              {renderCol(col2, 1)}
+              {renderCol(col3, 2)}
+            </motion.div>
+          );
+        })()}
       </div>
 
       {lightboxIndex !== null && (
-        <Lightbox index={lightboxIndex} onClose={() => setLightboxIndex(null)} />
+        <Lightbox
+          index={lightboxIndex}
+          images={images}
+          onClose={() => setLightboxIndex(null)}
+        />
       )}
     </>
-  )
+  );
 }
