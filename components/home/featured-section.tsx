@@ -7,7 +7,7 @@ import { getFeaturedTours } from "@/lib/api/tours";
 import { useQuery } from "@tanstack/react-query";
 
 export default function FeaturedSection() {
-  const { data, isiLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ["featured_tours"],
     queryFn: getFeaturedTours,
   });
@@ -50,15 +50,6 @@ export default function FeaturedSection() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        {/* {Array.from({ length: 8 }).map((_, index) => {
-          const city = cities[index % cities.length];
-          return (
-            <motion.div key={city.slug + index} variants={cardVariants}>
-              <FeatureCard city={city} />
-            </motion.div>
-          );
-        })} */}
-
         {data?.map((tour) => {
           return (
             <motion.div key={tour.id} variants={cardVariants}>

@@ -1,33 +1,51 @@
-import { notFound } from 'next/navigation'
-import CityDetailWidget from '@/components/details/city-detail-widget'
-import TextSectiona from '@/components/details/text-sectiona'
-import Itinerary from '@/components/details/Itinerary'
-import Cheack from '@/components/details/cheack'
-import Feedbacks from '@/components/details/Feedbacks'
-import DetailCard from '@/components/details/detail-card'
-import { getCityBySlug } from '@/lib/cities'
+import CityDetailWidget from "@/components/details/city-detail-widget";
+import { notFound } from "next/navigation";
+// import { getCityBySlug } from "@/lib/cities";
+import TextSectiona from "@/components/details/text-sectiona";
+import Itinerary from "@/components/details/Itinerary";
+// import { useQuery } from "@tanstack/react-query";
 
-export default function CityDetailPage({
-  params
+import { getTourDetails } from "@/lib/api/tours";
+import Cheack from "@/components/details/cheack";
+import DetailCard from "@/components/details/detail-card";
+
+export default async function CityDetailPage({
+  params,
 }: {
   params: {
-    slug: string
-  }
+    slug: string;
+  };
 }) {
-  const city = getCityBySlug(params.slug)
-  if (!city) return notFound()
+  const { slug } = await params;
+  // const city = getCityBySlug(params.slug);
+
+  // const {
+  //   data: city,
+  //   isFetching,
+  //   isLoading,
+  // } = useQuery({
+  //   queryKey: [params.slug],
+  //   queryFn: async () => await getTourDetails(params.slug),
+  // });
+
+  const tour = await getTourDetails(slug);
+
+  // if (isFetching || isLoading) {
+  //   return <>Loading....</>;
+  // }
+
+  if (!tour) return notFound();
 
   return (
     <div className="w-full min-w-0 overflow-x-hidden px-4 sm:px-5 md:px-6 lg:px-8">
       <div className="mx-auto w-full min-w-0 max-w-7xl">
-        <CityDetailWidget city={city} />
-        <TextSectiona city={city} />
-        <Itinerary city={city} />
-        <Cheack city={city} />
-        <Feedbacks city={city} />
-        <DetailCard city={city} />
+        <CityDetailWidget tour={tour} />
+        <TextSectiona tour={tour} />
+        <Itinerary tour={tour} />
+        <Cheack tour={tour} />
+        {/* <Feedbacks tour={tour} /> */}
+        <DetailCard tour={tour} />
       </div>
     </div>
-  )
+  );
 }
-

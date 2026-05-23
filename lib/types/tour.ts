@@ -1,3 +1,9 @@
+export interface ILanguage {
+  id: number;
+  name: string;
+  code: string;
+}
+
 export interface ITour {
   id: number;
   image: string;
@@ -22,4 +28,8 @@ export interface ITour {
   highlights_en: string;
   highlights_ru: string;
   highlights_uz: string;
+  languages?: ILanguage[];
+
+  kids_allowed: boolean;
+  infants_allowed: boolean;
 }

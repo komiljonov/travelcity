@@ -1,9 +1,9 @@
-import type { City } from "@/lib/cities";
-import { cities } from "@/lib/cities";
+import { ITour } from "@type/tour";
 import FeatureCard from "../ui/featurecard";
 
-export default function DetailCard({ city }: { city: City }) {
-  const recommended = cities.filter((c) => c.slug !== city.slug).slice(0, 4);
+export default function DetailCard({ tour }: { tour: ITour }) {
+  // const recommended = cities.filter((c) => c.slug !== tour.slug).slice(0, 4);
+  const recommended = [tour, tour, tour];
   return (
     <div className="max-w-7xl m-auto w-full min-w-0">
       <div className="mt-24">
@@ -14,9 +14,15 @@ export default function DetailCard({ city }: { city: City }) {
           Explore The Uzbekistan`s most iconic cities and hidden gems
         </p>
       </div>
-      <div className="flex justify-center gap-5 mb-8 mt-6 max-md:flex-col max-md:items-stretch">
+      {/* <div className="flex justify-center gap-5 mb-8 mt-6 max-md:flex-col max-md:items-stretch">
         {recommended.map((c) => (
-          <FeatureCard key={c.slug} tour={c} />
+          <FeatureCard key={c.id} tour={c} />
+        ))}
+      </div> */}
+
+      <div className="grid grid-cols-4 gap-5 mb-8 mt-6 max-md:flex max-md:flex-col max-md:items-stretch">
+        {recommended.map((c) => (
+          <FeatureCard key={c.id} tour={c} />
         ))}
       </div>
     </div>

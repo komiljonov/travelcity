@@ -30,6 +30,7 @@ export default function FeatureCard({ tour }: { tour: ITour }) {
             className="rounded-b-[22px] w-full object-cover h-[220px]"
             width={305}
             height={228}
+            // fill
             alt={tour.name}
           />
         </motion.div>
@@ -41,7 +42,7 @@ export default function FeatureCard({ tour }: { tour: ITour }) {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="font-semibold text-[18px] text-[#1E2939] mb-2 h-[54px]"
           >
-            {tour.name} aaaa
+            {tour.name}
           </motion.h1>
 
           <motion.span
