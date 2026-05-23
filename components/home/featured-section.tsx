@@ -1,57 +1,72 @@
-'use client'
+"use client";
 
-import React from 'react'
-import FeatureCard from '../ui/featurecard'
-import { motion } from 'framer-motion'
-import { cities } from '@/lib/cities'
+import { motion } from "framer-motion";
+import FeatureCard from "../ui/featurecard";
+
+import { getFeaturedTours } from "@/lib/api/tours";
+import { useQuery } from "@tanstack/react-query";
 
 export default function FeaturedSection() {
+  const { data, isiLoading, isError } = useQuery({
+    queryKey: ["featured_tours"],
+    queryFn: getFeaturedTours,
+  });
 
   const containerVariants = {
     hidden: {},
-    visible: { transition: { staggerChildren: 0.2 } }
-  }
+    visible: { transition: { staggerChildren: 0.2 } },
+  };
 
   const cardVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6 }
-    }
-  }
+      transition: { duration: 0.6 },
+    },
+  };
 
   return (
-    <div className='max-w-7xl m-auto mt-[64px] max-md:px-4'>
+    <div className="max-w-7xl m-auto mt-[64px] max-md:px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.8 }}
       >
-        <h1 className='text-[36px] font-bold max-md:text-[26px]'>Featured tours</h1>
-        <p className='font-medium text-[#6A7282] mt-2 text-[14px] max-md:text-[13px]'>
+        <h1 className="text-[36px] font-bold max-md:text-[26px]">
+          Featured tours
+        </h1>
+        <p className="font-medium text-[#6A7282] mt-2 text-[14px] max-md:text-[13px]">
           Explore the Uzbekistan`s most iconic cities and hidden gems
         </p>
       </motion.div>
 
       {/* Cards Grid */}
       <motion.div
-        className='mt-6 grid grid-cols-4 gap-5 max-md:flex max-md:flex-col max-md:w-full'
+        className="mt-6 grid grid-cols-4 gap-5 max-md:flex max-md:flex-col max-md:w-full"
         variants={containerVariants}
         initial="visible"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        {Array.from({ length: 8 }).map((_, index) => {
-          const city = cities[index % cities.length]
+        {/* {Array.from({ length: 8 }).map((_, index) => {
+          const city = cities[index % cities.length];
           return (
             <motion.div key={city.slug + index} variants={cardVariants}>
               <FeatureCard city={city} />
             </motion.div>
-          )
+          );
+        })} */}
+
+        {data?.map((tour) => {
+          return (
+            <motion.div key={tour.id} variants={cardVariants}>
+              <FeatureCard tour={tour} />
+            </motion.div>
+          );
         })}
       </motion.div>
     </div>
-  )
+  );
 }
