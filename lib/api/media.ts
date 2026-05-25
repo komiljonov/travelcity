@@ -1,9 +1,10 @@
 import api from "@/lib/axios";
 import { IMedia } from "@type/media";
+import { IPagination } from "@type/pagination";
 
 export const getTourMedia = async (
   tour: number | string
-): Promise<IMedia[]> => {
+): Promise<IPagination<IMedia>> => {
   const { data } = await api.get(`/v1/media/?tour=${tour}`);
   return data;
 };

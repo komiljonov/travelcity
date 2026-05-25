@@ -1,20 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { FaChevronDown } from "react-icons/fa";
-import { FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
-import { Images } from "lucide-react";
+import { Images, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { ITour } from "@type/tour";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTourMedia } from "@/lib/api/media";
+import api from "@/lib/axios";
 
 import { useForm, useWatch } from "react-hook-form";
 import { useRouter, usePathname } from "next/navigation";
+
+const PAGE_SIZE = 20;
+const PREFETCH_THRESHOLD = 5;
 
 type FormValues = {
   date: Date | null;
@@ -24,20 +26,255 @@ type FormValues = {
   language: string;
 };
 
+// ─── Lightbox ─────────────────────────────────────────────────────────────────
+function Lightbox({
+  startIndex,
+  initialImages,
+  totalCount,
+  onClose,
+  onLoadMore,
+}: {
+  startIndex: number;
+  initialImages: { src: string }[];
+  totalCount: number;
+  onClose: () => void;
+  onLoadMore: (page: number) => Promise<{ src: string }[]>;
+}) {
+  const [current, setCurrent] = useState(startIndex);
+  const [images, setImages] = useState(initialImages);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadedPagesRef = useRef(new Set([1]));
+  const thumbsRef = useRef<HTMLDivElement>(null);
+  const imagesLengthRef = useRef(initialImages.length);
+
+  useEffect(() => {
+    imagesLengthRef.current = images.length;
+  }, [images.length]);
+
+  const maybeLoadMore = useCallback(
+    async (idx: number) => {
+      const currentLength = imagesLengthRef.current;
+      if (currentLength - idx > PREFETCH_THRESHOLD) return;
+      if (currentLength >= totalCount) return;
+      const nextPage = Math.floor(currentLength / PAGE_SIZE) + 1;
+      if (loadedPagesRef.current.has(nextPage)) return;
+      loadedPagesRef.current.add(nextPage);
+      setLoadingMore(true);
+      try {
+        const newImgs = await onLoadMore(nextPage);
+        setImages((prev) => {
+          imagesLengthRef.current = prev.length + newImgs.length;
+          return [...prev, ...newImgs];
+        });
+      } finally {
+        setLoadingMore(false);
+      }
+    },
+    [totalCount, onLoadMore]
+  );
+
+  const goTo = useCallback(
+    (next: number) => {
+      const total = Math.max(images.length, totalCount);
+      const clamped = ((next % total) + total) % total;
+      const safeIdx = Math.min(clamped, images.length - 1);
+      setCurrent(safeIdx);
+      maybeLoadMore(safeIdx);
+    },
+    [images.length, totalCount, maybeLoadMore]
+  );
+
+  // Scroll thumbnail strip to keep active centered
+  useEffect(() => {
+    if (!thumbsRef.current) return;
+    const THUMB_W = 56 + 8;
+    const containerWidth = thumbsRef.current.clientWidth;
+    thumbsRef.current.scrollTo({
+      left: Math.max(0, current * THUMB_W - containerWidth / 2 + 28),
+      behavior: "smooth",
+    });
+  }, [current]);
+
+  // Keyboard navigation + body scroll lock
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") goTo(current + 1);
+      if (e.key === "ArrowLeft") goTo(current - 1);
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [current, goTo, onClose]);
+
+  return (
+    <div className="fixed inset-0 z-[200] bg-black/92" onClick={onClose}>
+      <div
+        className="relative z-10 flex flex-col h-full"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Top bar */}
+        <div className="relative flex items-center justify-center h-14 flex-none">
+          <p className="text-white/50 text-sm font-medium tracking-widest">
+            <span className="text-white font-semibold">{current + 1}</span>
+            {" / "}
+            <span>{totalCount}</span>
+            {loadingMore && (
+              <Loader2
+                size={12}
+                className="inline ml-2 animate-spin text-white/40"
+              />
+            )}
+          </p>
+          <button
+            onClick={onClose}
+            className="absolute right-5 w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/25 transition"
+          >
+            <X size={18} className="text-white" />
+          </button>
+        </div>
+
+        {/* Main image area */}
+        <div
+          className="flex-1 relative flex items-center justify-center px-16 min-h-0"
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+
+            console.log(target);
+
+            if (target.closest("button")) {
+              return;
+            }
+
+            onClose();
+          }}
+        >
+          <button
+            onClick={() => goTo(current - 1)}
+            className="absolute left-4 z-20 w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/25 transition"
+          >
+            <ChevronLeft size={24} className="text-white" />
+          </button>
+
+          <div className="relative w-full h-full">
+            {images.map((img, i) => {
+              if (Math.abs(i - current) > 2) return null;
+              return (
+                <div
+                  key={i}
+                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-200"
+                  style={{
+                    opacity: i === current ? 1 : 0,
+                    pointerEvents: i === current ? "auto" : "none",
+                  }}
+                >
+                  <div
+                    className="relative"
+                    style={{ width: "85vw", height: "75vh" }}
+                  >
+                    <Image
+                      src={img.src}
+                      alt={`gallery ${i + 1}`}
+                      fill
+                      className="object-contain rounded-xl"
+                      priority={i === current}
+                      sizes="85vw"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+
+            {loadingMore && current >= images.length - 1 && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 size={40} className="animate-spin text-white/40" />
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => goTo(current + 1)}
+            className="absolute right-4 z-20 w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/25 transition"
+          >
+            <ChevronRight size={24} className="text-white" />
+          </button>
+        </div>
+
+        {/* Thumbnail strip */}
+        <div className="flex-none h-24 flex items-center justify-center">
+          <div
+            ref={thumbsRef}
+            style={{
+              width: "40vw",
+              overflowX: "scroll",
+              overflowY: "visible",
+              scrollbarWidth: "none",
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+            }}
+          >
+            <div className="flex gap-2 px-8 py-2">
+              {images.map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className={`relative flex-none w-14 h-14 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                    i === current
+                      ? "border-white opacity-100 scale-110"
+                      : "border-transparent opacity-40 hover:opacity-70"
+                  }`}
+                >
+                  <Image
+                    src={img.src}
+                    alt={`thumb ${i + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+
+              {Array.from({
+                length: Math.max(0, totalCount - images.length),
+              }).map((_, i) => (
+                <div
+                  key={`ghost-${i}`}
+                  className="flex-none w-14 h-14 rounded-lg bg-white/10 animate-pulse"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── CityDetailWidget ─────────────────────────────────────────────────────────
 export default function CityDetailWidget({ tour }: { tour: ITour }) {
   const pathname = usePathname();
-
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const { data: images } = useQuery({
+  const { data: images, isLoading } = useQuery({
     queryKey: ["images", tour.id],
-    queryFn: async () => await getTourMedia(tour.id),
+    queryFn: () => getTourMedia(tour.id),
     enabled: !!tour,
   });
 
   const [mainIndex, setMainIndex] = useState(0);
   const [openPanel, setOpenPanel] = useState<"guests" | "date" | "lang" | null>(
-    null
+    "guests"
+  );
+
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const [errors, setErrors] = useState<{ date?: string; language?: string }>(
+    {}
   );
 
   const { setValue, handleSubmit, control } = useForm<FormValues>({
@@ -46,11 +283,12 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
       adult: 1,
       child: 0,
       infant: 0,
-      language: "uz",
+      language: "",
     },
   });
 
-  // const { date, adult, child, infant, language } = watch();
+  const currentImage = images?.results?.[mainIndex]?.media;
+
   const date = useWatch({ control, name: "date" });
   const adult = useWatch({ control, name: "adult" });
   const child = useWatch({ control, name: "child" });
@@ -64,25 +302,72 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
     params.set("child", String(child));
     params.set("infant", String(infant));
     params.set("language", language);
-
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }, [router, pathname, date, adult, child, infant, language]);
 
-  const [galleryOpen, setGalleryOpen] = useState(false);
-  const [galleryIndex, setGalleryIndex] = useState(0);
+  const initialLightboxImages = (images?.results ?? []).map((item) => ({
+    src: item.media,
+  }));
+  const totalCount = images?.count ?? 0;
+
+  const loadMore = useCallback(
+    async (page: number): Promise<{ src: string }[]> => {
+      const data = await queryClient.fetchQuery({
+        queryKey: ["tourMedia", tour.id, page],
+        queryFn: async () => {
+          const { data } = await api.get(
+            `/v1/media/?tour=${tour.id}&page=${page}`
+          );
+          return data;
+        },
+        staleTime: 5 * 60 * 1000,
+      });
+      return (data?.results ?? []).map((item: { media: string }) => ({
+        src: item.media,
+      }));
+    },
+    [queryClient, tour.id]
+  );
 
   function togglePanel(key: "guests" | "date" | "lang" | null) {
     setOpenPanel((prev) => (prev === key ? null : key));
   }
 
-  function openGalleryFromMain() {
-    setGalleryIndex(mainIndex);
-    setGalleryOpen(true);
-  }
+  // function onSubmit(data: FormValues) {
+  //   const params = new URLSearchParams({
+  //     date: data.date ? data.date.toISOString().split("T")[0] : "",
+  //     adult: String(data.adult),
+  //     child: String(data.child),
+  //     infant: String(data.infant),
+  //     language: data.language,
+  //   });
+  //   router.push(`/check/${tour.id}?${params.toString()}`);
+  // }
 
   function onSubmit(data: FormValues) {
+    const newErrors: { date?: string; language?: string } = {};
+
+    if (!data.date) newErrors.date = "Please select a date";
+    if (!data.language) newErrors.language = "Please choose a language";
+
+    // if (Object.keys(newErrors).length > 0) {
+    //   setErrors(newErrors);
+    //   // open the first panel that has an error
+    //   if (newErrors.date) togglePanel("date");
+    //   else if (newErrors.language) togglePanel("lang");
+    //   return;
+    // }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      if (newErrors.date) setOpenPanel("date");
+      else if (newErrors.language) setOpenPanel("lang");
+      return;
+    }
+
+    setErrors({});
     const params = new URLSearchParams({
-      date: data.date ? data.date.toISOString().split("T")[0] : "",
+      date: data.date!.toISOString().split("T")[0],
       adult: String(data.adult),
       child: String(data.child),
       infant: String(data.infant),
@@ -90,7 +375,6 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
     });
     router.push(`/check/${tour.id}?${params.toString()}`);
   }
-  // function handleSubmit() {}
 
   return (
     <div className="w-full min-w-0 max-w-7xl mx-auto">
@@ -100,37 +384,42 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
       </p>
 
       <div className="grid min-w-0 grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6 items-start">
-        {/* LEFT: Image gallery — height matches right panel on desktop */}
+        {/* LEFT: Image gallery */}
         <div className="min-w-0 lg:col-span-2 flex flex-col lg:h-[628px]">
           <motion.div
             key={mainIndex}
             initial={{ opacity: 0, scale: 0.99 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.25 }}
-            onClick={openGalleryFromMain}
+            onClick={() => setLightboxIndex(mainIndex)}
             className="relative flex-1 rounded-xl overflow-hidden cursor-pointer max-md:h-[280px] max-md:flex-none"
             role="button"
             tabIndex={0}
           >
-            <Image
-              // src={mainImage}
-              // src="http://127.0.0.1/media/tour_previews/kmljnvs.jpg"
-
-              src={images?.[mainIndex]?.media ?? images?.[0]?.media ?? ""}
-              alt=""
-              fill
-              sizes="(max-width: 1024px) 100vw, 66vw"
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-black/10 hover:bg-black/0 transition-colors" />
+            {isLoading || !currentImage ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-gray-300 border-t-[#EA004A] rounded-full animate-spin" />
+              </div>
+            ) : (
+              <>
+                <Image
+                  src={currentImage}
+                  alt=""
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-contain"
+                  priority
+                />
+                <div className="absolute inset-0  hover:bg-black/0 transition-colors -z-10" />
+              </>
+            )}
           </motion.div>
 
           {/* Thumbnails */}
           <div className="grid grid-cols-5 max-md:flex gap-3 mt-4 flex-none overflow-x-auto overflow-y-hidden pb-1 [-webkit-overflow-scrolling:touch] min-w-0 max-w-full">
-            {images?.slice(0, 5).map((img, i) => (
+            {images?.results.slice(0, 5).map((img, i) => (
               <button
-                key={`${img}-${i}`}
+                key={`${img.id}-${i}`}
                 type="button"
                 onClick={() => setMainIndex(i)}
                 className={[
@@ -140,11 +429,19 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                 aria-label={`Thumbnail ${i + 1}`}
               >
                 <div className="relative md:w-[100%] md:h-[120px] w-[110px] h-[85px]">
-                  <Image src={img.media} alt="" fill className="object-cover" />
+                  <Image
+                    src={img.media_preview}
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
 
                   {i === 4 && (
                     <div
-                      onClick={openGalleryFromMain}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLightboxIndex(4);
+                      }}
                       className="absolute inset-0 flex items-center justify-center gap-1"
                       style={{ background: "#0000008F" }}
                     >
@@ -158,7 +455,7 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                           letterSpacing: "0%",
                         }}
                       >
-                        500+
+                        {images?.count ?? 0}+
                       </span>
                     </div>
                   )}
@@ -210,7 +507,6 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                       fill="#1E2939"
                     />
                   </svg>
-
                   <span className="font-medium text-sm text-gray-900">
                     Adult x{adult}
                     {child + infant > 0 && `, +${child + infant}`}
@@ -240,22 +536,15 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                       title: "Adult",
                       value: adult,
                       age: "Age 12 – 99",
-                      // onMinus: () => setAdult((v) => Math.max(0, v - 1)),
                       onMinus: () => setValue("adult", Math.max(0, adult - 1)),
-
                       onPlus: () => setValue("adult", adult + 1),
-                      // onPlus: () => setAdult((v) => v + 1),
                     },
                     {
                       key: "child",
                       title: "Child",
                       value: child,
                       age: "Age 4 – 11",
-                      // onMinus: () => setChild((v) => Math.max(0, v - 1)),
-                      // onPlus: () => setChild((v) => v + 1),
-
                       onMinus: () => setValue("child", Math.max(0, child - 1)),
-
                       onPlus: () => setValue("child", child + 1),
                     },
                     {
@@ -263,16 +552,14 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                       title: "Infant",
                       value: infant,
                       age: "Age 3 and younger",
-                      // onMinus: () => setInfant((v) => Math.max(0, v - 1)),
-                      // onPlus: () => setInfant((v) => v + 1),
                       onMinus: () =>
                         setValue("infant", Math.max(0, infant - 1)),
-
                       onPlus: () => setValue("infant", infant + 1),
                     },
                   ].map((row, idx, arr) => {
-                    if (!tour.kids_allowed && row.key == "child") return;
-                    if (!tour.infants_allowed && row.key == "infant") return;
+                    if (!tour.kids_allowed && row.key === "child") return null;
+                    if (!tour.infants_allowed && row.key === "infant")
+                      return null;
                     return (
                       <div
                         key={row.key}
@@ -342,7 +629,6 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                       fill="#1E2939"
                     />
                   </svg>
-
                   <span className="font-medium text-sm text-gray-900">
                     {date
                       ? `${String(date.getDate()).padStart(2, "0")}.${String(
@@ -373,8 +659,12 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                     <DayPicker
                       mode="single"
                       selected={date ?? undefined}
-                      // onSelect={(d) => setDate(d ?? null)}
-                      onSelect={(d) => setValue("date", d ?? null)}
+                      // onSelect={(d) => setValue("date", d ?? null)}
+                      onSelect={(d) => {
+                        setValue("date", d ?? null);
+                        if (d)
+                          setErrors((prev) => ({ ...prev, date: undefined }));
+                      }}
                       disabled={{ before: new Date() }}
                       classNames={{
                         months: "flex flex-col",
@@ -393,16 +683,21 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                         cell: "w-10 h-9 text-center p-0",
                         day: "w-10 h-9 rounded-full text-sm hover:bg-pink-100 font-normal text-gray-700 transition-colors outline-none focus:outline-none",
                         day_selected:
-                          "bg-[#EA004A1F] !text-white rounded-full outline-none border-0",
-                        // day_today: "font-normal text-[#FF0]",
+                          "!bg-[#EA004A] !text-white rounded-full outline-none border-0",
                         day_today: "font-normal text-[#EA004A] !bg-transparent",
-
                         day_outside: "text-gray-300",
                         day_disabled: "text-gray-200 cursor-not-allowed",
                       }}
                     />
                   </div>
                 </div>
+                {/* MOVED OUTSIDE motion.div */}
+                {errors.date && (
+                  <p className="text-[#EA004A] text-xs pb-3 px-4 flex items-center gap-1">
+                    <span className="inline-block w-1 h-1 rounded-full bg-[#EA004A]" />
+                    {errors.date}
+                  </p>
+                )}
               </motion.div>
             </div>
 
@@ -426,7 +721,6 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                       fill="#1E2939"
                     />
                   </svg>
-
                   <span className="font-medium text-sm text-gray-900">
                     {"Choose language"}
                   </span>
@@ -469,85 +763,52 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                           type="radio"
                           name="preferredLanguage"
                           checked={active}
-                          onChange={() => setValue("language", lang.code)}
+                          // onChange={() => setValue("language", lang.code)}
+                          onChange={() => {
+                            setValue("language", lang.code);
+                            setErrors((prev) => ({
+                              ...prev,
+                              language: undefined,
+                            }));
+                          }}
                           className="accent-[#EA004A] w-4 h-4"
                         />
                       </label>
                     );
                   })}
                 </div>
+                {/* MOVED OUTSIDE motion.div */}
+                {errors.language && (
+                  <p className="text-[#EA004A] text-xs pb-3 px-4 flex items-center gap-1">
+                    <span className="inline-block w-1 h-1 rounded-full bg-[#EA004A]" />
+                    {errors.language}
+                  </p>
+                )}
               </motion.div>
             </div>
           </div>
 
-          {/* <Link href="/check" className="flex-none pt-3"> */}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="w-full bg-[#EA004A] text-white text-sm font-semibold py-3.5 rounded-full"
-            // onClick={handleSubmit}
             onClick={handleSubmit(onSubmit)}
           >
             Check availability
           </motion.button>
-          {/* </Link> */}
         </div>
       </div>
 
-      {/* Fullscreen gallery */}
-      <AnimatePresence>
-        {galleryOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4"
-          >
-            <button
-              type="button"
-              onClick={() => setGalleryOpen(false)}
-              className="absolute top-5 right-5 w-10 h-10 rounded-full bg-black/40 border border-white/20 flex items-center justify-center text-white"
-              aria-label="Close gallery"
-            >
-              <FiX size={20} />
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                setGalleryIndex(
-                  (v) => (v - 1 + (images?.length ?? 0)) % (images?.length ?? 0)
-                )
-              }
-              className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/40 border border-white/20 flex items-center justify-center text-white"
-              aria-label="Previous image"
-            >
-              <FiChevronLeft size={22} />
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                setGalleryIndex((v) => (v + 1) % (images?.length ?? 0))
-              }
-              className="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/40 border border-white/20 flex items-center justify-center text-white"
-              aria-label="Next image"
-            >
-              <FiChevronRight size={22} />
-            </button>
-
-            <div className="relative w-full max-w-5xl aspect-[16/10]">
-              <Image
-                // src={images[galleryIndex] || images[0]}
-                src={images?.[galleryIndex]?.media ?? ""}
-                alt=""
-                fill
-                className="object-contain rounded-2xl"
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Lightbox */}
+      {lightboxIndex !== null && initialLightboxImages.length > 0 && (
+        <Lightbox
+          startIndex={lightboxIndex}
+          initialImages={initialLightboxImages}
+          totalCount={totalCount}
+          onClose={() => setLightboxIndex(null)}
+          onLoadMore={loadMore}
+        />
+      )}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import Itinerary from "@/components/details/Itinerary";
 import { getTourDetails } from "@/lib/api/tours";
 import Cheack from "@/components/details/cheack";
 import DetailCard from "@/components/details/detail-card";
+import Feedbacks from "@/components/details/Feedbacks";
 
 export default async function CityDetailPage({
   params,
@@ -17,22 +18,8 @@ export default async function CityDetailPage({
   };
 }) {
   const { slug } = await params;
-  // const city = getCityBySlug(params.slug);
-
-  // const {
-  //   data: city,
-  //   isFetching,
-  //   isLoading,
-  // } = useQuery({
-  //   queryKey: [params.slug],
-  //   queryFn: async () => await getTourDetails(params.slug),
-  // });
 
   const tour = await getTourDetails(slug);
-
-  // if (isFetching || isLoading) {
-  //   return <>Loading....</>;
-  // }
 
   if (!tour) return notFound();
 
@@ -43,7 +30,7 @@ export default async function CityDetailPage({
         <TextSectiona tour={tour} />
         <Itinerary tour={tour} />
         <Cheack tour={tour} />
-        {/* <Feedbacks tour={tour} /> */}
+        <Feedbacks tour={tour} />
         <DetailCard tour={tour} />
       </div>
     </div>
