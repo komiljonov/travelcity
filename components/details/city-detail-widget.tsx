@@ -180,7 +180,7 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
             </p>
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <h2 className="text-2xl font-bold text-[#EA004A]">
-                {tour.price_starting} aaa
+                ${tour.price_starting}
               </h2>
               <span className="text-neutral-800 font-medium text-xs leading-[18px] tracking-normal">
                 per person

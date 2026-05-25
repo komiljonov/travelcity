@@ -12,3 +12,15 @@ export const getAllMedia = async (): Promise<IMedia[]> => {
   const { data } = await api.get(`/v1/media/`);
   return data;
 };
+
+export async function getMedia(page: number, pageSize = 20) {
+  const { data } = await api.get(
+    `/v1/media/?page=${page}&page_size=${pageSize}`
+  );
+
+  return data as Promise<{
+    results: { media: string }[];
+    count: number;
+    next: string | null;
+  }>;
+}

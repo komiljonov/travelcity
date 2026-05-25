@@ -27,7 +27,7 @@ export default function FeaturedSection() {
   };
 
   return (
-    <div className="max-w-7xl m-auto mt-[64px] max-md:px-4">
+    <div className="max-w-7xl m-auto mt-[64px] max-md:px-4" id="featured_tours">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

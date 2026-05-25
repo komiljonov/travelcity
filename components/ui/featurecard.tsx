@@ -52,7 +52,7 @@ export default function FeatureCard({ tour }: { tour: ITour }) {
           >
             <p className="font-medium text-[12px] text-[#6A7282]">From</p>
             <p className="text-[#EA004A] text-[18px] font-bold">
-              {tour.price_starting}
+              ${tour.price_starting}
             </p>
           </motion.span>
         </div>

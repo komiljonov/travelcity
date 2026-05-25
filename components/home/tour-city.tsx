@@ -107,7 +107,7 @@ export default function TourCity() {
         ))}
       </div>
 
-      <motion.button
+      {/* <motion.button
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.5 }}
@@ -115,7 +115,7 @@ export default function TourCity() {
         className="cursor-pointer w-[184px] h-[44px] items-center rounded-[12px] justify-center mt-6 bg-[#1E2939] text-white font-semibold gap-2 text-[14px] leading-[24px] tracking-[0%] flex max-md:w-full"
       >
         See All Regions <GrFormNextLink size={18} />
-      </motion.button>
+      </motion.button> */}
     </div>
   );
 }

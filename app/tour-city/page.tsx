@@ -1,12 +1,11 @@
-import Recomedtion from '@/components/citys/Recomedtion'
-import TourHero from '@/components/citys/tourhero'
-import React from 'react'
+import Recomedtion from "@/components/citys/Recomedtion";
+import TourHero from "@/components/citys/tourhero";
 
 export default function page() {
-    return (
-        <div>
-            <TourHero/>
-            <Recomedtion/>
-        </div>
-    )
+  return (
+    <div>
+      <TourHero />
+      <Recomedtion />
+    </div>
+  );
 }
