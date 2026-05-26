@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "scan": "i18next-scanner"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.100.13",
@@ -33,6 +34,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "i18next-scanner": "^4.6.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

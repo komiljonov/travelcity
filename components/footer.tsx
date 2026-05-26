@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
 import {
   FaFacebook,
   FaInstagram,
@@ -12,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useConfig } from "@/lib/hooks/useConfig";
 import { useQuery } from "@tanstack/react-query";
 import { getCities } from "@/lib/api/city";
+import { getField } from "@/lib/utils/i18n";
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -42,49 +42,15 @@ export default function Footer() {
                   className="font-semibold text-[14px] sm:text-[16px] md:text-[18px] leading-[24px] md:leading-[28px] tracking-[0%] text-[#D1D5DC] whitespace-nowrap"
                   href="#"
                 >
-                  {/* {t("footer.cities.tashkent")} */}
-                  {c.name}
+                  {getField(c, "name")}
                 </a>
               );
             })}
-
-            {/* <a
-              className="font-semibold text-[14px] sm:text-[16px] md:text-[18px] leading-[24px] md:leading-[28px] tracking-[0%] text-[#D1D5DC] whitespace-nowrap"
-              href="#"
-            >
-              {t("footer.cities.bukhara")}
-            </a>
-            <a
-              className="font-semibold text-[14px] sm:text-[16px] md:text-[18px] leading-[24px] md:leading-[28px] tracking-[0%] text-[#D1D5DC] whitespace-nowrap"
-              href="#"
-            >
-              {t("footer.cities.samarkand")}
-            </a>
-            <a
-              className="font-semibold text-[14px] sm:text-[16px] md:text-[18px] leading-[24px] md:leading-[28px] tracking-[0%] text-[#D1D5DC] whitespace-nowrap"
-              href="#"
-            >
-              {t("footer.cities.shahrisabz")}
-            </a>
-            <a
-              className="font-semibold text-[14px] sm:text-[16px] md:text-[18px] leading-[24px] md:leading-[28px] tracking-[0%] text-[#D1D5DC] whitespace-nowrap"
-              href="#"
-            >
-              {t("footer.cities.termez")}
-            </a>
-            <a
-              className="font-semibold text-[14px] sm:text-[16px] md:text-[18px] leading-[24px] md:leading-[28px] tracking-[0%] text-[#D1D5DC] whitespace-nowrap"
-              href="#"
-            >
-              {t("footer.cities.khorezm")}
-            </a> */}
           </div>
           <a
             className="font-semibold text-[14px] sm:text-[16px] md:text-[18px] leading-[24px] md:leading-[28px] tracking-[0%] text-[#D1D5DC] text-center md:text-left shrink-0"
             href="#"
           >
-            {/* {t("footer.phone")} */}
-
             {config?.phone_number}
           </a>
         </div>

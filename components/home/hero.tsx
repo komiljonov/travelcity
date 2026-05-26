@@ -1,6 +1,7 @@
 "use client";
 
 import { useConfig } from "@/lib/hooks/useConfig";
+import { getField } from "@/lib/utils/i18n";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -17,9 +18,15 @@ export default function Hero() {
   return (
     <div
       className="relative bg-center bg-cover bg-no-repeat mt-6"
+      // style={{
+      //   backgroundImage: data?.home_main_image
+      //     ? `url(${data.home_main_image})`
+      //     : `url(/header.png)`,
+      // }}
+
       style={{
-        backgroundImage: data?.home_main_image
-          ? `url(${data.home_main_image})`
+        backgroundImage: data
+          ? `url(${getField(data, "home_main_image")})`
           : `url(/header.png)`,
       }}
     >
@@ -32,8 +39,7 @@ export default function Hero() {
             transition={{ duration: 1, ease: "easeOut" }}
             className="font-bold text-[96px] leading-[110px] tracking-[-0.02em] text-white max-md:text-[44px] max-md:leading-[52px] max-md:px-4"
           >
-            {/* {t("hero.title")} */}
-            {data?.home_main_title}
+            {getField(data, "home_main_title")}
           </motion.h1>
 
           <motion.p
@@ -43,20 +49,8 @@ export default function Hero() {
             transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
             className="mt-4 font-medium text-[18px] leading-[28px] tracking-normal w-[730px] text-white max-md:w-full max-md:max-w-[730px] max-md:text-[14px] max-md:leading-[20px] max-md:px-4"
           >
-            {/* {t("hero.description")} */}
-            {data?.home_main_description}
+            {getField(data, "home_main_description")}
           </motion.p>
-          {/* <Link href={"#featured_tours"}>
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
-              className="cursor-pointer px-6 h-[48px] rounded-[100px] bg-white font-semibold text-[16px] leading-[24px] tracking-normal text-center mt-7 max-md:mx-4 max-md:w-[calc(100%-32px)]"
-            >
-              {t("hero.cta")}
-            </motion.button>
-          </Link> */}
           <motion.button
             onClick={() => {
               document
@@ -69,7 +63,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
             className="cursor-pointer px-6 h-[48px] rounded-[100px] bg-white font-semibold text-[16px] leading-[24px] tracking-normal text-center mt-7 max-md:mx-4 max-md:w-[calc(100%-32px)]"
           >
-            {t("hero.cta")}
+            {t("home.hero.cta")}
           </motion.button>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import FeatureCard from "../ui/featurecard";
 import { useQuery } from "@tanstack/react-query";
 import { ITour } from "@type/tour";
+import { getField } from "@/lib/utils/i18n";
 
 export default function TourHero({ city }: { city: ICity }) {
   //   const tours = await getCityTours(city.id);
@@ -23,10 +24,10 @@ export default function TourHero({ city }: { city: ICity }) {
       <div className="bg-[url(/tourhero.png)] bg-center bg-cover bg-no-repeat max-md:px-4">
         <div className="max-w-7xl m-auto pb-[81px] pt-[82px] max-md:pb-10 max-md:pt-14">
           <h1 className="font-bold text-[48px] leading-[60px] tracking-[-0.02em] text-white max-md:text-[28px] max-md:leading-[36px]">
-            {city.name}
+            {getField(city, "name")}
           </h1>
           <p className="text-white mt-2 max-md:text-[13px] max-md:leading-[18px]">
-            {city.description}
+            {getField(city, "description")}
           </p>
         </div>
       </div>

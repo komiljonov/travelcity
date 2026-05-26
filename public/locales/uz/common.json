@@ -1,27 +1,83 @@
 {
-  "hero": {
-    "title": "BUXORO SAYOHATI",
-    "description": "Markaziy Osiyoning eng jozibador shaharlaridan birida qadimiy madrasalar, ulug‘vor minoralar va gavjum bozorlarga sayohat qiling. Tarix, me'morchilik va haqiqiy o‘zbek mehmondo‘stligi siz uchun unutilmas sayohat yaratadi.",
-    "cta": "Sayohatga o‘tish"
+  "language": {
+    "english": "English",
+    "russian": "Русский",
+    "uzbek": "O'zbekcha"
+  },
+  "footer": {
+    "copy": "© 2026 - Toshkentda mehr bilan yaratildi"
+  },
+  "home": {
+    "featured_tours": "Tavsiya etilgan turlar",
+    "featured_tours_description": "O'zbekistonning eng mashhur shaharlari va yashirin go'shalarini kashf eting",
+    "gallery": {
+      "title": "Galereya",
+      "description": "Har bir sayohatdan lahzalar"
+    },
+    "hero": {
+      "cta": "Turga o'tish"
+    },
+    "tours_by_city": "Shaharlar bo'yicha turlar",
+    "tours_by_city_description": "Sayyohlar orasida mashhur yo'nalishlar"
   },
   "navbar": {
     "chooseLanguage": "Tilni tanlang"
   },
-  "language": {
-    "english": "English",
-    "russian": "Русский",
-    "uzbek": "O'zbek"
+  "price": {
+    "from": "Dan boshlab",
+    "per_person": "kishi uchun",
+    "starts_from": "Boshlanish narxi",
+    "ticket_not_required_under_3": "3 yoshgacha bo'lgan bolalarga chipta kerak emas"
   },
-  "footer": {
-    "cities": {
-      "tashkent": "Toshkent",
-      "bukhara": "Buxoro",
-      "samarkand": "Samarqand",
-      "shahrisabz": "Shahrisabz",
-      "termez": "Termiz",
-      "khorezm": "Xorazm"
-    },
-    "phone": "+998 91 001-00-00",
-    "copy": "© 2026 - Toshkentda ishlab chiqilgan"
-  }
+  "tours_available": "{{count}} ta tur mavjud",
+  "tours_available_one": "{{count}} ta tur mavjud",
+  "tours_available_other": "{{count}} ta tur mavjud",
+  "check": {
+    "tariff": {
+      "select_this_option": "Ushbu variantni tanlash"
+    }
+  },
+  "errors": {
+    "full_name_required": "To'liq ismingizni kiriting",
+    "email_required": "Emailingizni kiriting",
+    "phone_number_required": "Telefon raqamingizni kiriting",
+    "date_required": "Sanani kiriting",
+    "language_required": "Tilni tanlang"
+  },
+  "fullname": "To'liq ism",
+  "email": "Elektron pochta",
+  "phone_number": "Telefon raqami",
+  "cancel": "Bekor qilish",
+  "loading": "Yuklanmoqda...",
+  "send": "Yuborish",
+  "adult": "Katta yoshli",
+  "adult_age_range": "Yoshi 12 - 99",
+  "child": "Bola",
+  "child_age_range": "Yoshi 4 - 11",
+  "infant": "Chaqaloq",
+  "infant_age_range": "Yoshi 3 va undan kichik",
+  "select_date": "Sanani tanlang",
+  "chooose_language": "Tilni tanlang",
+  "check_availability": "Mavjudligini tekshirish",
+  "description": "Tavsif",
+  "tour": {
+    "about_this_activity": "Bu faoliyat haqida",
+    "free_cancellation": "Bepul bekor qilish",
+    "free_cancellation_desc": "To'liq qaytarish uchun 24 soat oldin bekor qiling",
+    "host_or_greeter": "Gid yoki kutib oluvchi",
+    "includes": "Narxga kiradi",
+    "highlights": "Afzalliklari",
+    "you_might_like": "Sizga ham yoqishi mumkin",
+    "you_might_like_desc": "O'zbekistonning eng mashhur shaharlari va yashirin go'shalarini kashf eting",
+    "reviews_one": "{{count}} ta fikr",
+    "reviews_other": "{{count}} ta fikr"
+  },
+  "duration": "Davomiyligi",
+  "duration_desc": "Boshlanish vaqtlarini ko'rish uchun mavjudligini tekshiring",
+  "itinerary": "Sayohat rejasi",
+  "feedbacks": "Fikrlar",
+  "order": {
+    "available_tariffs": "Mavjud tariflar"
+  },
+  "guests": "Mehmonlar"
 }

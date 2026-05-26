@@ -53,11 +53,6 @@ export default function Recomedtion() {
         gap-5
       "
         >
-          {/* {cities.slice(0, 4).map((city) => (
-            <motion.div key={city.slug} variants={item}>
-              <FeatureCard tour={city} />
-            </motion.div>
-          ))} */}
         </div>
       </motion.div>
     </div>

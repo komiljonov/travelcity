@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { X, ChevronLeft, ChevronRight, ZoomIn, Loader2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMedia } from "@/lib/api/media";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 20;
 const GRID_MAX = 10;
@@ -335,6 +336,8 @@ function Slot({
 
 // ─── Gallery ──────────────────────────────────────────────────────────────────
 export default function Gallery() {
+  const { t } = useTranslation();
+
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const queryClient = useQueryClient();
 
@@ -375,9 +378,12 @@ export default function Gallery() {
     <>
       <div className="max-w-[1280px] mx-auto mt-16 mb-16 px-4 sm:px-6 lg:px-8">
         <div>
-          <h1 className="text-[36px] font-bold max-md:text-[26px]">Gallery</h1>
+          <h1 className="text-[36px] font-bold max-md:text-[26px]">
+            {t("home.gallery.title")}
+          </h1>
           <p className="font-medium text-[#6A7282] mt-2 text-[14px] max-md:text-[13px]">
-            Discover moments from every journey
+            {/* Discover moments from every journey */}
+            {t("home.gallery.description")}
           </p>
         </div>
 

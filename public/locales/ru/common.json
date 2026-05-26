@@ -1,27 +1,86 @@
 {
-  "hero": {
-    "title": "ТУР ПО БУХАРЕ",
-    "description": "Откройте для себя древние медресе, величественные минареты и оживлённые базары одного из самых привлекательных городов Центральной Азии. Пусть история, архитектура и настоящее узбекское гостеприимство создадут для вас незабываемое путешествие.",
-    "cta": "Перейти к туру"
-  },
-  "navbar": {
-    "chooseLanguage": "Выберите язык"
-  },
   "language": {
     "english": "English",
     "russian": "Русский",
-    "uzbek": "Узбекский"
+    "uzbek": "O'zbekcha"
   },
   "footer": {
-    "cities": {
-      "tashkent": "Ташкент",
-      "bukhara": "Бухара",
-      "samarkand": "Самарканд",
-      "shahrisabz": "Шахрисабз",
-      "termez": "Термез",
-      "khorezm": "Хорезм"
+    "copy": "© 2026 - Создано с душой в Ташкенте"
+  },
+  "home": {
+    "featured_tours": "Популярные туры",
+    "featured_tours_description": "Откройте для себя знаковые города и скрытые жемчужины Узбекистана",
+    "gallery": {
+      "title": "Галерея",
+      "description": "Моменты из каждого путешествия"
     },
-    "phone": "+998 91 001-00-00",
-    "copy": "© 2026 - Разработано в Ташкенте"
-  }
+    "hero": {
+      "cta": "К турам"
+    },
+    "tours_by_city": "Туры по городам",
+    "tours_by_city_description": "Популярные направления среди туристов"
+  },
+  "navbar": {
+    "chooseLanguage": "Выбрать язык"
+  },
+  "price": {
+    "from": "От",
+    "per_person": "за человека",
+    "starts_from": "Начинается от",
+    "ticket_not_required_under_3": "Дети 3 лет и младше не нуждаются в билете"
+  },
+  "tours_available_one": "{{count}} тур доступен",
+  "tours_available_few": "{{count}} тура доступно",
+  "tours_available_many": "{{count}} туров доступно",
+  "tours_available_other": "{{count}} туров доступно",
+  "check": {
+    "tariff": {
+      "select_this_option": "Выбрать этот вариант"
+    }
+  },
+  "errors": {
+    "full_name_required": "Введите полное имя",
+    "email_required": "Введите email",
+    "phone_number_required": "Введите номер телефона",
+    "date_required": "Укажите дату",
+    "language_required": "Выберите язык"
+  },
+  "fullname": "Полное имя",
+  "email": "Электронная почта",
+  "phone_number": "Номер телефона",
+  "cancel": "Отмена",
+  "loading": "Загрузка...",
+  "send": "Отправить",
+  "adult": "Взрослый",
+  "adult_age_range": "Возраст 12 - 99",
+  "child": "Ребёнок",
+  "child_age_range": "Возраст 4 - 11",
+  "infant": "Младенец",
+  "infant_age_range": "Возраст 3 и младше",
+  "select_date": "Выбрать дату",
+  "chooose_language": "Выбрать язык",
+  "check_availability": "Проверить доступность",
+  "description": "Описание",
+  "tour": {
+    "about_this_activity": "Об этой активности",
+    "free_cancellation": "Бесплатная отмена",
+    "free_cancellation_desc": "Отмените за 24 часа до начала для полного возврата средств",
+    "host_or_greeter": "Гид или встречающий",
+    "includes": "Включено",
+    "highlights": "Особенности",
+    "you_might_like": "Вам также может понравиться",
+    "you_might_like_desc": "Откройте для себя знаковые города и скрытые жемчужины Узбекистана",
+    "reviews_one": "{{count}} отзыв",
+    "reviews_few": "{{count}} отзыва",
+    "reviews_many": "{{count}} отзывов",
+    "reviews_other": "{{count}} отзывов"
+  },
+  "duration": "Продолжительность",
+  "duration_desc": "Проверьте доступность, чтобы увидеть время начала",
+  "itinerary": "Маршрут",
+  "feedbacks": "Отзывы",
+  "order": {
+    "available_tariffs": "Доступные тарифы"
+  },
+  "guests": "Гости"
 }

@@ -1,9 +1,8 @@
 import CityDetailWidget from "@/components/details/city-detail-widget";
 import { notFound } from "next/navigation";
-// import { getCityBySlug } from "@/lib/cities";
+
 import TextSectiona from "@/components/details/text-sectiona";
 import Itinerary from "@/components/details/Itinerary";
-// import { useQuery } from "@tanstack/react-query";
 
 import { getTourDetails } from "@/lib/api/tours";
 import Cheack from "@/components/details/cheack";

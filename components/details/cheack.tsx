@@ -1,7 +1,11 @@
+"use client";
 import Image from "next/image";
 import { ITour } from "@type/tour";
+import { useTranslation } from "react-i18next";
+import { getField } from "@/lib/utils/i18n";
 
 export default function Cheack({ tour }: { tour: ITour }) {
+  const { t } = useTranslation();
   return (
     <div className="w-full min-w-0">
       <div className="max-w-7xl m-auto w-full min-w-0 mb-6 mt-10">
@@ -10,11 +14,11 @@ export default function Cheack({ tour }: { tour: ITour }) {
       <div className=" max-w-7xl m-auto w-full min-w-0 flex gap-[86px] max-md:flex-col max-md:gap-6  ">
         <div>
           <h1 className="font-bold text-[18px] leading-7 tracking-[0%]">
-            Includes
+            {t("tour.includes")}
           </h1>
         </div>
         <div className="flex flex-col gap-3 ">
-          {tour.includes
+          {getField(tour, "includes")
             .split("\n")
             .filter(Boolean)
             .map((line, idx) => {
@@ -46,19 +50,21 @@ export default function Cheack({ tour }: { tour: ITour }) {
         <div className=" max-w-7xl m-auto w-full min-w-0 flex gap-[86px] max-md:flex-col max-md:gap-6  ">
           <div>
             <h1 className="font-bold text-[18px] leading-7 tracking-[0%]">
-              Highlights
+              {t("tour.highlights")}
             </h1>
           </div>
           <div>
             <ul className="list-disc flex flex-col gap-3 max-md:pl-4">
-              {tour.highlights.split("\n").map((h, idx) => (
-                <li
-                  key={idx}
-                  className="font-medium text-[16px] leading-6 tracking-normal"
-                >
-                  {h}
-                </li>
-              ))}
+              {getField(tour, "highlights")
+                .split("\n")
+                .map((h, idx) => (
+                  <li
+                    key={idx}
+                    className="font-medium text-[16px] leading-6 tracking-normal"
+                  >
+                    {h}
+                  </li>
+                ))}
             </ul>
           </div>
         </div>

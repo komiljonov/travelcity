@@ -1,206 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { DayPicker } from "react-day-picker";
-import "react-day-picker/dist/style.css";
-import { AnimatePresence, motion } from "framer-motion";
-import { FaUser, FaChevronDown, FaCalendarAlt, FaGlobe } from "react-icons/fa";
-import { FiX } from "react-icons/fi";
-import { ITour } from "@type/tour";
-import { useForm, useWatch } from "react-hook-form";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getTourTariffs } from "@/lib/api/tariffs";
 import { useQuery } from "@tanstack/react-query";
+import { ITour } from "@type/tour";
+import { motion } from "framer-motion";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
+import { FaChevronDown } from "react-icons/fa";
 import Tariff from "./tariff";
-
-/* ─── Book Tour Modal ─── */
-function BookModal({
-  tour,
-  guests,
-  date,
-  language,
-  onClose,
-}: {
-  tour: ITour;
-  guests: number;
-  date: Date | null;
-  language: string;
-  onClose: () => void;
-}) {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [emailError, setEmailError] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-
-  const validateEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-
-  function handleSend() {
-    if (!validateEmail(email)) {
-      setEmailError(true);
-      return;
-    }
-    setEmailError(false);
-    setSubmitted(true);
-  }
-
-  return (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onClose}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-
-      <motion.div
-        className="relative bg-white rounded-[20px] w-full max-w-[460px] p-6 shadow-2xl z-10"
-        initial={{ opacity: 0, scale: 0.95, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 16 }}
-        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-        >
-          <FiX size={18} className="text-gray-500" />
-        </button>
-
-        {submitted ? (
-          <div className="flex flex-col items-center justify-center py-8 gap-3 text-center">
-            <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-2">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M5 13l4 4L19 7"
-                  stroke="#22c55e"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold text-[#1E2939]">Booking sent!</h3>
-            <p className="text-sm text-gray-500">
-              We will contact you soon as possible.
-            </p>
-            <button
-              onClick={onClose}
-              className="mt-4 bg-[#1E2939] text-white font-semibold py-3 px-8 rounded-full hover:bg-[#2d3d50] transition-colors"
-            >
-              Close
-            </button>
-          </div>
-        ) : (
-          <>
-            <h2 className="text-xl font-bold text-[#1E2939]">Book tour</h2>
-            <p className="text-sm text-gray-400 mt-1 mb-5">
-              Fill the form below to book tour we will contact with you soon as
-              possible
-            </p>
-
-            {/* Summary chips */}
-            <div className="flex flex-wrap gap-2 mb-5">
-              <div className="flex items-center gap-1.5 bg-[#F3F4F6] rounded-full px-3 py-1.5 text-xs font-medium text-[#1E2939]">
-                <FaUser size={10} className="text-gray-400" />
-                Adult x{guests}
-              </div>
-              {date && (
-                <div className="flex items-center gap-1.5 bg-[#F3F4F6] rounded-full px-3 py-1.5 text-xs font-medium text-[#1E2939]">
-                  <FaCalendarAlt size={10} className="text-gray-400" />
-                  {date
-                    .toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })
-                    .replace(/\//g, ".")}
-                </div>
-              )}
-              <div className="flex items-center gap-1.5 bg-[#F3F4F6] rounded-full px-3 py-1.5 text-xs font-medium text-[#1E2939]">
-                <FaGlobe size={10} className="text-gray-400" />
-                {language}
-              </div>
-            </div>
-
-            {/* Full Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-[#1E2939] mb-1.5">
-                Full Name
-              </label>
-              <input
-                type="text"
-                placeholder="John Anderson"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full h-12 px-4 rounded-[50px] bg-[#F3F4F6] border border-transparent text-sm text-[#1E2939] placeholder:text-gray-400 outline-none focus:border-gray-300 transition-colors"
-              />
-            </div>
-
-            {/* Email */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-[#1E2939] mb-1.5">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="example@email.com"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailError) setEmailError(false);
-                }}
-                className={`w-full h-12 px-4 rounded-[50px] bg-[#F3F4F6] border text-sm text-[#1E2939] placeholder:text-gray-400 outline-none transition-colors ${
-                  emailError
-                    ? "border-[#EA004A] bg-red-50"
-                    : "border-transparent focus:border-gray-300"
-                }`}
-              />
-              {emailError && (
-                <p className="text-[#EA004A] text-xs mt-1.5">
-                  Please enter correct email address
-                </p>
-              )}
-            </div>
-
-            {/* Phone */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-[#1E2939] mb-1.5">
-                Phone number
-              </label>
-              <input
-                type="tel"
-                placeholder="+998"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full h-12 px-4 rounded-[50px] bg-[#F3F4F6] border border-transparent text-sm text-[#1E2939] placeholder:text-gray-400 outline-none focus:border-gray-300 transition-colors"
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={onClose}
-                className="flex-1 h-12 rounded-full border border-gray-200 text-sm font-semibold text-[#1E2939] hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSend}
-                className="flex-1 h-12 rounded-full bg-[#1E2939] text-white text-sm font-semibold hover:bg-[#2d3d50] transition-colors"
-              >
-                Send
-              </button>
-            </div>
-          </>
-        )}
-      </motion.div>
-    </motion.div>
-  );
-}
+import { getField } from "@/lib/utils/i18n";
+import { useTranslation } from "react-i18next";
 
 type FormValues = {
   date: Date | null;
@@ -212,6 +24,7 @@ type FormValues = {
 
 /* ─── Main Component ─── */
 export default function CheckBox({ tour }: { tour: ITour }) {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
 
   const router = useRouter();
@@ -223,16 +36,11 @@ export default function CheckBox({ tour }: { tour: ITour }) {
     // enabled: !!tour,
   });
 
-  // const [date, setDate] = useState<Date | null>(null);
   const [openPanel, setOpenPanel] = useState<"guests" | "date" | "lang" | null>(
     null
   );
-  // const [adult, setAdult] = useState(1);
-  // const [child, setChild] = useState(0);
-  // const [infant, setInfant] = useState(0);
-  // const [selectedTourLanguage, setSelectedTourLanguage] = useState("uz");
 
-  const { setValue, handleSubmit, control } = useForm<FormValues>({
+  const methods = useForm<FormValues>({
     defaultValues: {
       date: searchParams.get("date")
         ? new Date(searchParams.get("date")!)
@@ -240,17 +48,17 @@ export default function CheckBox({ tour }: { tour: ITour }) {
       adult: Number(searchParams.get("adult") ?? 1),
       child: Number(searchParams.get("child") ?? 0),
       infant: Number(searchParams.get("infant") ?? 0),
-      language: searchParams.get("language") ?? "uz",
+      language: searchParams.get("language") ?? "",
     },
   });
+
+  const { setValue, control } = methods;
 
   const date = useWatch({ control, name: "date" });
   const adult = useWatch({ control, name: "adult" });
   const child = useWatch({ control, name: "child" });
   const infant = useWatch({ control, name: "infant" });
   const selectedTourLanguage = useWatch({ control, name: "language" });
-
-  const [showBookModal, setShowBookModal] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -263,16 +71,6 @@ export default function CheckBox({ tour }: { tour: ITour }) {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }, [pathname, router, date, adult, child, infant, selectedTourLanguage]);
 
-  // const languages = useMemo(
-  //   () => [
-  //     { code: "en", label: "English" },
-  //     { code: "ru", label: "Russian" },
-  //     { code: "uz", label: "O'zbek" },
-  //     { code: "tr", label: "Turkish" },
-  //   ],
-  //   []
-  // );
-
   function togglePanel(key: "guests" | "date" | "lang") {
     setOpenPanel((prev) => (prev === key ? null : key));
   }
@@ -284,21 +82,26 @@ export default function CheckBox({ tour }: { tour: ITour }) {
   return (
     <>
       <div className="w-full min-w-0 max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold max-md:text-xl">{tour.name}</h1>
+        <h1 className="text-2xl font-bold max-md:text-xl">
+          {getField(tour, "name")}
+        </h1>
         <p className="text-gray-500 text-sm mt-1 max-md:text-xs">
-          {"120 reviews"} • {tour.duration_title}
+          {t("tour.reviews", { count: tour.feedback_count })} •{" "}
+          {getField(tour, "duration_title")}
         </p>
         <h2 className="mt-10 text-[#1E2939] font-bold text-[24px] max-md:text-[20px] mb-6">
-          Available Tour Options
+          {t("order.available_tariffs")}
         </h2>
 
         <div className="grid min-w-0 grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6 items-start">
           {/* LEFT: Tour card */}
-          <div className="min-w-0 lg:col-span-2 flex flex-col">
-            {tariffs?.map((tariff) => {
-              return <Tariff key={tariff.id} tariff={tariff} />;
-            })}
-          </div>
+          <FormProvider {...methods}>
+            <div className="min-w-0 lg:col-span-2 flex flex-col">
+              {tariffs?.map((tariff) => {
+                return <Tariff key={tariff.id} tour={tour} tariff={tariff} />;
+              })}
+            </div>
+          </FormProvider>
 
           {/* RIGHT: Booking controls */}
 
@@ -309,14 +112,14 @@ export default function CheckBox({ tour }: { tour: ITour }) {
             {/* Price */}
             <div className="flex-none">
               <p className="text-neutral-800 font-medium text-base leading-6 tracking-normal uppercase">
-                Starts from
+                {t("price.starts_from")}
               </p>
               <div className="flex items-baseline gap-1.5 mt-0.5">
                 <h2 className="text-2xl font-bold text-[#EA004A]">
                   ${tour.price_starting}
                 </h2>
                 <span className="text-neutral-800 font-medium text-xs leading-[18px] tracking-normal">
-                  per person
+                  {t("price.per_person")}
                 </span>
               </div>
             </div>
@@ -345,7 +148,7 @@ export default function CheckBox({ tour }: { tour: ITour }) {
                     </svg>
 
                     <span className="font-medium text-sm text-gray-900">
-                      Adult x{adult}
+                      {t("guests")} x{adult}
                       {child + infant > 0 && `, +${child + infant}`}
                     </span>
                   </div>
@@ -370,29 +173,27 @@ export default function CheckBox({ tour }: { tour: ITour }) {
                     {[
                       {
                         key: "adult",
-                        title: "Adult",
+                        title: t("adult"),
                         value: adult,
-                        age: "Age 12 – 99",
+                        age: t("adult_age_range"),
                         onMinus: () =>
                           setValue("adult", Math.max(0, adult - 1)),
                         onPlus: () => setValue("adult", adult + 1),
                       },
                       {
                         key: "child",
-                        title: "Child",
+                        title: t("child"),
                         value: child,
-                        age: "Age 4 – 11",
-                        // onMinus: () => setChild((v) => Math.max(0, v - 1)),
-                        // onPlus: () => setChild((v) => v + 1),
+                        age: t("child_age_range"),
                         onMinus: () =>
                           setValue("child", Math.max(0, child - 1)),
                         onPlus: () => setValue("child", child + 1),
                       },
                       {
                         key: "infant",
-                        title: "Infant",
+                        title: t("infant"),
                         value: infant,
-                        age: "Age 3 and younger",
+                        age: t("infant_age_range"),
                         onMinus: () =>
                           setValue("infant", Math.max(0, infant - 1)),
                         onPlus: () => setValue("infant", infant + 1),
@@ -443,7 +244,7 @@ export default function CheckBox({ tour }: { tour: ITour }) {
                     {tour.infants_allowed && (
                       <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100">
                         <p className="text-xs text-gray-400">
-                          Age 3 and younger do not require a ticket
+                          {t("price.ticket_not_required_under_3")}
                         </p>
                       </div>
                     )}
@@ -609,19 +410,6 @@ export default function CheckBox({ tour }: { tour: ITour }) {
           </div>
         </div>
       </div>
-
-      {/* Modal */}
-      <AnimatePresence>
-        {showBookModal && (
-          <BookModal
-            tour={tour}
-            guests={adult + child + infant}
-            date={date}
-            language={selectedLangLabel}
-            onClose={() => setShowBookModal(false)}
-          />
-        )}
-      </AnimatePresence>
     </>
   );
 }

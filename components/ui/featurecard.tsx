@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ITour } from "@type/tour";
+import { useTranslation } from "react-i18next";
+import { getField } from "@/lib/utils/i18n";
 
 export default function FeatureCard({ tour }: { tour: ITour }) {
+  const { t } = useTranslation();
   return (
-    <Link href={`/cities/${tour.id}`}>
+    <Link href={`/tours/${tour.id}`}>
       <motion.div
         variants={{
           hidden: { opacity: 0, y: 20 },
@@ -30,7 +32,6 @@ export default function FeatureCard({ tour }: { tour: ITour }) {
             className="rounded-b-[22px] w-full object-cover h-[220px]"
             width={305}
             height={228}
-            // fill
             alt={tour.name}
           />
         </motion.div>
@@ -42,7 +43,7 @@ export default function FeatureCard({ tour }: { tour: ITour }) {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="font-semibold text-[18px] text-[#1E2939] mb-2 h-[54px]"
           >
-            {tour.name}
+            {getField(tour, "name")}
           </motion.h1>
 
           <motion.span
@@ -50,7 +51,9 @@ export default function FeatureCard({ tour }: { tour: ITour }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <p className="font-medium text-[12px] text-[#6A7282]">From</p>
+            <p className="font-medium text-[12px] text-[#6A7282]">
+              {t("price.from")}
+            </p>
             <p className="text-[#EA004A] text-[18px] font-bold">
               ${tour.price_starting}
             </p>

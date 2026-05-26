@@ -1,18 +1,28 @@
+"use client";
 import { getTourItinerary } from "@/lib/api/itinerary";
+import { getField } from "@/lib/utils/i18n";
+import { useQuery } from "@tanstack/react-query";
 import { ITour } from "@type/tour";
+import { useTranslation } from "react-i18next";
 
-export default async function Itinerary({ tour }: { tour: ITour }) {
+export default function Itinerary({ tour }: { tour: ITour }) {
+  const { t } = useTranslation();
   // const { data } = useQuery({
   //   queryKey: ["itinerary", tour.id],
   //   queryFn: () => getTourItinerary(tour.id),
   // });
 
-  const data = await getTourItinerary(tour.id);
+  // const data = await getTourItinerary(tour.id);
+
+  const { data } = useQuery({
+    queryKey: ["itinerary", tour.id],
+    queryFn: () => getTourItinerary(tour.id),
+  });
 
   return (
     <section className="max-w-7xl mx-auto w-full min-w-0 mt-10 py-10">
       <h2 className="text-2xl font-bold mb-8 max-md:text-xl max-md:mb-6">
-        Itinerary
+        {t("itinerary")}
       </h2>
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 max-md:gap-4">
@@ -27,13 +37,11 @@ export default async function Itinerary({ tour }: { tour: ITour }) {
               </div>
 
               <p className="font-semibold text-[18px] leading-[28px] tracking-[0px] text-[#1e2939]">
-                {item.time} | {item.name}
+                {getField(item, "time")} | {getField(item, "name")}
               </p>
 
-              {/* <h3 className="text-lg font-semibold text-white"></h3> */}
-
               <p className=" mt-1 font-medium text-[16px] leading-[24px] tracking-[0px] text-[#6a7282] ">
-                {item.description}
+                {getField(item, "description")}
               </p>
             </div>
           ))}

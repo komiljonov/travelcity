@@ -1,10 +1,12 @@
 "use client";
 import { getCities } from "@/lib/api/city";
+import { getField } from "@/lib/utils/i18n";
 import { useQuery } from "@tanstack/react-query";
 // import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { GrFormNextLink } from "react-icons/gr";
 
 // const cities = [
@@ -53,6 +55,8 @@ import { GrFormNextLink } from "react-icons/gr";
 // ];
 
 export default function TourCity() {
+  const { t } = useTranslation();
+
   const { data: cities } = useQuery({
     queryKey: ["cities"],
     queryFn: getCities,
@@ -72,10 +76,12 @@ export default function TourCity() {
         transition={{ duration: 0.8 }}
       >
         <h1 className="text-[36px] font-bold max-md:text-[26px]">
-          Tours by cities
+          {/* Tours by cities */}
+          {t("home.tours_by_city")}
         </h1>
         <p className="font-medium text-[#6A7282] mt-2 text-[14px] max-md:text-[13px]">
-          Popular destinations for tourists
+          {/* Popular destinations for tourists */}
+          {t("home.tours_by_city_description")}
         </p>
       </motion.div>
 
@@ -98,10 +104,10 @@ export default function TourCity() {
               />
               <div className="absolute w-full h-full flex flex-col justify-center items-center bg-black/60 group-hover:-translate-y-90 duration-700">
                 <h1 className="text-white text-center font-bold mb-1 text-[24px] leading-[32px] tracking-[0%] max-md:text-[20px] max-md:leading-[26px]">
-                  {city.name}
+                  {getField(city, "name")}
                 </h1>
                 <p className="text-white text-center font-medium text-[14px] leading-[20px] tracking-[0%] max-md:text-[12px] max-md:leading-[16px]">
-                  {city.tours_count} tours available
+                  {t("tours_available", { count: city.tours_count })}
                 </p>
               </div>
             </motion.div>

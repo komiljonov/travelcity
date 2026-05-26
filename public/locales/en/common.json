@@ -1,27 +1,82 @@
 {
-  "hero": {
-    "title": "BUKHARA TOUR",
-    "description": "Discover ancient madrasahs, majestic minarets, and vibrant bazaars in one of Central Asia’s most captivating cities. Let history, architecture, and authentic Uzbek hospitality create an unforgettable journey",
-    "cta": "Go to Tour"
-  },
-  "navbar": {
-    "chooseLanguage": "Choose language"
-  },
   "language": {
     "english": "English",
-    "russian": "Russian",
-    "uzbek": "Uzbek"
+    "russian": "Русский",
+    "uzbek": "O'zbekcha"
   },
   "footer": {
-    "cities": {
-      "tashkent": "Tashkent",
-      "bukhara": "Bukhara",
-      "samarkand": "Samarkand",
-      "shahrisabz": "Shahrisabz",
-      "termez": "Termez",
-      "khorezm": "Khorezm"
+    "copy": "© 2026 - Designed with mehr in Tashkent"
+  },
+  "home": {
+    "featured_tours": "Featured tours",
+    "featured_tours_description": "Explore the Uzbekistan`s most iconic cities and hidden gems",
+    "gallery": {
+      "title": "Gallery",
+      "description": "Discover moments from every journey"
     },
-    "phone": "+998 91 001-00-00",
-    "copy": "© 2026 - Designed with in Tashkent"
-  }
+    "hero": {
+      "cta": "Go to Tour"
+    },
+    "tours_by_city": "Tours by cities",
+    "tours_by_city_description": "Popular destinations for tourists"
+  },
+  "navbar": {
+    "chooseLanguage": "Choose Language"
+  },
+  "price": {
+    "from": "From",
+    "per_person": "per person",
+    "starts_from": "Starts from",
+    "ticket_not_required_under_3": "Age 3 and younger do not require a ticket"
+  },
+  "tours_available_one": "{{count}} tour available",
+  "tours_available_other": "{{count}} tours available",
+  "check": {
+    "tariff": {
+      "select_this_option": "Select this option"
+    }
+  },
+  "errors": {
+    "full_name_required": "Full name is required",
+    "email_required": "Email is required",
+    "phone_number_required": "Phone number is required",
+    "date_required": "Date is required",
+    "language_required": "Language is required"
+  },
+  "fullname": "Full name",
+  "email": "Email",
+  "phone_number": "Phone number",
+  "cancel": "Cancel",
+  "loading": "Loading...",
+  "send": "Send",
+  "adult": "Adult",
+  "adult_age_range": "Age 12 - 99",
+  "child": "Child",
+  "child_age_range": "Age 4 - 11",
+  "infant": "Infant",
+  "infant_age_range": "Age 3 and younger",
+  "select_date": "Select date",
+  "chooose_language": "Choose language",
+  "check_availability": "Check availability",
+  "description": "Description",
+  "tour": {
+    "about_this_activity": "About this activity",
+    "free_cancellation": "Free cancellation",
+    "free_cancellation_desc": "Cancel up to 24 hours in advance for a full refund",
+    "host_or_greeter": "Host or greeter",
+    "includes": "Includes",
+    "highlights": "Highlights",
+    "you_might_like": "You might also like",
+    "you_might_like_desc": "Explore The Uzbekistan`s most iconic cities and hidden gems",
+    "reviews_one": "{{count}} review",
+    "reviews_other": "{{count}} reviews"
+  },
+  "duration": "Duration",
+  "duration_desc": "Check availability to see starting times",
+  "itinerary": "Itinerary",
+  "feedbacks": "Feedbacks",
+  "order": {
+    "available_tariffs": "Available tariffs"
+  },
+  "guests": "Guests"
 }

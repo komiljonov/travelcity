@@ -5,8 +5,11 @@ import FeatureCard from "../ui/featurecard";
 
 import { getFeaturedTours } from "@/lib/api/tours";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 export default function FeaturedSection() {
+  const { t } = useTranslation();
+
   const { data } = useQuery({
     queryKey: ["featured_tours"],
     queryFn: getFeaturedTours,
@@ -35,10 +38,11 @@ export default function FeaturedSection() {
         transition={{ duration: 0.8 }}
       >
         <h1 className="text-[36px] font-bold max-md:text-[26px]">
-          Featured tours
+          {t("home.featured_tours")}
         </h1>
         <p className="font-medium text-[#6A7282] mt-2 text-[14px] max-md:text-[13px]">
-          Explore the Uzbekistan`s most iconic cities and hidden gems
+          {/* Explore the Uzbekistan`s most iconic cities and hidden gems */}
+          {t("home.featured_tours_description")}
         </p>
       </motion.div>
 

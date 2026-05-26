@@ -1,19 +1,21 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import Image from "next/image";
-import { DayPicker } from "react-day-picker";
-import "react-day-picker/dist/style.css";
-import { motion } from "framer-motion";
-import { FaChevronDown } from "react-icons/fa";
-import { Images, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
-import { ITour } from "@type/tour";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTourMedia } from "@/lib/api/media";
 import api from "@/lib/axios";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ITour } from "@type/tour";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, Images, Loader2, X } from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import { FaChevronDown } from "react-icons/fa";
 
+import { usePathname, useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
-import { useRouter, usePathname } from "next/navigation";
+import { getField } from "@/lib/utils/i18n";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 20;
 const PREFETCH_THRESHOLD = 5;
@@ -256,6 +258,7 @@ function Lightbox({
 
 // ─── CityDetailWidget ─────────────────────────────────────────────────────────
 export default function CityDetailWidget({ tour }: { tour: ITour }) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -297,7 +300,13 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (date) params.set("date", date.toISOString().split("T")[0]);
+    // if (date) params.set("date", date.toISOString().split("T")[0]);
+    if (date) {
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      params.set("date", `${yyyy}-${mm}-${dd}`);
+    }
     params.set("adult", String(adult));
     params.set("child", String(child));
     params.set("infant", String(infant));
@@ -347,8 +356,8 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
   function onSubmit(data: FormValues) {
     const newErrors: { date?: string; language?: string } = {};
 
-    if (!data.date) newErrors.date = "Please select a date";
-    if (!data.language) newErrors.language = "Please choose a language";
+    if (!data.date) newErrors.date = t("errors.date_required");
+    if (!data.language) newErrors.language = t("errors.language_required");
 
     // if (Object.keys(newErrors).length > 0) {
     //   setErrors(newErrors);
@@ -367,7 +376,13 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
 
     setErrors({});
     const params = new URLSearchParams({
-      date: data.date!.toISOString().split("T")[0],
+      date: (() => {
+        const d = data.date!;
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}`;
+      })(),
       adult: String(data.adult),
       child: String(data.child),
       infant: String(data.infant),
@@ -378,9 +393,11 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
 
   return (
     <div className="w-full min-w-0 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold max-md:text-xl">{tour.name}</h1>
+      <h1 className="text-2xl font-bold max-md:text-xl">
+        {getField(tour, "name")}
+      </h1>
       <p className="text-gray-500 text-sm mt-1 max-md:text-xs">
-        {"120 review"} • {tour.duration_title}
+        {"120 review"} • {getField(tour, "duration_title")}
       </p>
 
       <div className="grid min-w-0 grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6 items-start">
@@ -473,14 +490,14 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
           {/* Price */}
           <div className="flex-none">
             <p className="text-neutral-800 font-medium text-base leading-6 tracking-normal uppercase">
-              Starts from
+              {t("price.starts_from")}
             </p>
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <h2 className="text-2xl font-bold text-[#EA004A]">
                 ${tour.price_starting}
               </h2>
               <span className="text-neutral-800 font-medium text-xs leading-[18px] tracking-normal">
-                per person
+                {t("price.per_person")}
               </span>
             </div>
           </div>
@@ -508,7 +525,7 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                     />
                   </svg>
                   <span className="font-medium text-sm text-gray-900">
-                    Adult x{adult}
+                    {t("guests")} x{adult}
                     {child + infant > 0 && `, +${child + infant}`}
                   </span>
                 </div>
@@ -533,25 +550,25 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                   {[
                     {
                       key: "adult",
-                      title: "Adult",
+                      title: t("adult"),
                       value: adult,
-                      age: "Age 12 – 99",
+                      age: t("adult_age_range"),
                       onMinus: () => setValue("adult", Math.max(0, adult - 1)),
                       onPlus: () => setValue("adult", adult + 1),
                     },
                     {
                       key: "child",
-                      title: "Child",
+                      title: t("child"),
                       value: child,
-                      age: "Age 4 – 11",
+                      age: t("child_age_range"),
                       onMinus: () => setValue("child", Math.max(0, child - 1)),
                       onPlus: () => setValue("child", child + 1),
                     },
                     {
                       key: "infant",
-                      title: "Infant",
+                      title: t("infant"),
                       value: infant,
-                      age: "Age 3 and younger",
+                      age: t("infant_age_range"),
                       onMinus: () =>
                         setValue("infant", Math.max(0, infant - 1)),
                       onPlus: () => setValue("infant", infant + 1),
@@ -601,7 +618,7 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                   {tour.infants_allowed && (
                     <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100">
                       <p className="text-xs text-gray-400">
-                        Age 3 and younger do not require a ticket
+                        {t("price.ticket_not_required_under_3")}
                       </p>
                     </div>
                   )}
@@ -634,7 +651,7 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                       ? `${String(date.getDate()).padStart(2, "0")}.${String(
                           date.getMonth() + 1
                         ).padStart(2, "0")}.${date.getFullYear()}`
-                      : "Select date"}
+                      : t("select_date")}
                   </span>
                 </div>
                 <motion.span
@@ -722,7 +739,7 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
                     />
                   </svg>
                   <span className="font-medium text-sm text-gray-900">
-                    {"Choose language"}
+                    {t("chooose_language")}
                   </span>
                 </div>
                 <motion.span
@@ -794,7 +811,7 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
             className="w-full bg-[#EA004A] text-white text-sm font-semibold py-3.5 rounded-full"
             onClick={handleSubmit(onSubmit)}
           >
-            Check availability
+            {t("check_availability")}
           </motion.button>
         </div>
       </div>

@@ -1,21 +1,29 @@
+"use client";
+
 import Image from "next/image";
 import { ITour } from "@type/tour";
 import { getTourFeedbacks } from "@/lib/api/feedback";
-import { notFound } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
-export default async function Feedbacks({ tour }: { tour: ITour }) {
-  const feedbacks = await getTourFeedbacks(tour.id);
+export default function Feedbacks({ tour }: { tour: ITour }) {
+  const { t } = useTranslation();
 
-  if (!feedbacks) return notFound();
+  // const feedbacks = await getTourFeedbacks(tour.id);
 
-  console.log(feedbacks, 111);
+  // if (!feedbacks) return notFound();
+
+  const { data: feedbacks } = useQuery({
+    queryKey: ["feedbacks", tour.id],
+    queryFn: () => getTourFeedbacks(tour.id),
+  });
 
   return (
     <div className="max-w-7xl m-auto w-full min-w-0">
       <h1 className="font-bold text-[24px] leading-8 tracking-normal mt-10 mb-6 max-md:text-[18px]">
-        Feedbacks
+        {t("feedbacks")}
       </h1>
-      {feedbacks.results.map((fb, idx) => {
+      {feedbacks?.results.map((fb, idx) => {
         // const avatarSrc = fb.media?.[0]?.media || "/person.png";
         const avatarSrc = fb.consumer_image;
         const gallery = fb.media || [];

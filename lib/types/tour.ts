@@ -34,4 +34,5 @@ export interface ITour {
   infants_allowed: boolean;
 
   recommended_tours: ITour[];
+  feedback_count: number;
 }
