@@ -1,18 +1,18 @@
 "use client";
 
-import { getConfig } from "@/lib/api/config";
-import { useQuery } from "@tanstack/react-query";
+import { useConfig } from "@/lib/hooks/useConfig";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 export default function Hero() {
   const { t } = useTranslation();
 
-  const { data } = useQuery({
-    queryKey: ["config"],
-    queryFn: getConfig,
-  });
+  // const { data } = useQuery({
+  //   queryKey: ["config"],
+  //   queryFn: getConfig,
+  // });
+
+  const { data } = useConfig();
 
   return (
     <div

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 // import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { GrFormNextLink } from "react-icons/gr";
 
 // const cities = [
@@ -80,30 +81,31 @@ export default function TourCity() {
 
       <div className="flex flex-wrap justify-center gap-5 mt-6">
         {cities?.map((city, index) => (
-          <motion.div
-            key={index}
-            variants={cardVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            className={`travel-city-card relative overflow-hidden rounded-[24px] cursor-pointer group`}
-            style={{ width: `${413}px`, height: "220px" }}
-          >
-            <Image
-              src={city.image}
-              alt={city.name}
-              fill
-              className="object-cover"
-            />
-            <div className="absolute w-full h-full flex flex-col justify-center items-center bg-black/60 group-hover:-translate-y-90 duration-700">
-              <h1 className="text-white text-center font-bold mb-1 text-[24px] leading-[32px] tracking-[0%] max-md:text-[20px] max-md:leading-[26px]">
-                {city.name}
-              </h1>
-              <p className="text-white text-center font-medium text-[14px] leading-[20px] tracking-[0%] max-md:text-[12px] max-md:leading-[16px]">
-                {city.tours_count} tours available
-              </p>
-            </div>
-          </motion.div>
+          <Link key={index} href={`city-tours/${city.id}`}>
+            <motion.div
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              className={`travel-city-card relative overflow-hidden rounded-[24px] cursor-pointer group`}
+              style={{ width: `${413}px`, height: "220px" }}
+            >
+              <Image
+                src={city.image}
+                alt={city.name}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute w-full h-full flex flex-col justify-center items-center bg-black/60 group-hover:-translate-y-90 duration-700">
+                <h1 className="text-white text-center font-bold mb-1 text-[24px] leading-[32px] tracking-[0%] max-md:text-[20px] max-md:leading-[26px]">
+                  {city.name}
+                </h1>
+                <p className="text-white text-center font-medium text-[14px] leading-[20px] tracking-[0%] max-md:text-[12px] max-md:leading-[16px]">
+                  {city.tours_count} tours available
+                </p>
+              </div>
+            </motion.div>
+          </Link>
         ))}
       </div>
 

@@ -12,4 +12,6 @@ export interface IConfig {
   home_main_image_en: string;
   home_main_image_ru: string;
   home_main_image_uz: string;
+
+  phone_number: string;
 }

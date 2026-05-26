@@ -7,8 +7,13 @@ export const getFeaturedTours = async (): Promise<ITour[]> => {
 };
 
 export const getTourDetails = async (id: number | string): Promise<ITour> => {
-  console.log(id);
   const { data } = await api.get(`v1/tours/${id}`);
+
+  return data;
+};
+
+export const getCityTours = async (city: number | string): Promise<ITour[]> => {
+  const { data } = await api.get(`v1/tours?city=${city}`);
 
   return data;
 };
