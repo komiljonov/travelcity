@@ -45,7 +45,6 @@ export default function Tariff({
     [adults, child, infants, tariff]
   );
 
-  console.log(price);
 
   return (
     <>
@@ -57,7 +56,7 @@ export default function Tariff({
           {getField(tariff, "description")}
         </p>
 
-        {tariff.includes
+        {getField(tariff, "includes")
           .split("\n")
           .filter(Boolean)
           .map((line, i) => {

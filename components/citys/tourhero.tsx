@@ -4,7 +4,6 @@ import { getCityTours } from "@/lib/api/tours";
 import { motion } from "framer-motion";
 import FeatureCard from "../ui/featurecard";
 import { useQuery } from "@tanstack/react-query";
-import { ITour } from "@type/tour";
 import { getField } from "@/lib/utils/i18n";
 
 export default function TourHero({ city }: { city: ICity }) {
