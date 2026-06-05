@@ -73,7 +73,7 @@ export default function Tariff({
                   height={24}
                   alt=""
                 />
-                <span className="text-[#1E2939] font-medium text-sm">
+                <span className="text-[#1E2939] font-medium text-lg">
                   {displayText}
                 </span>
               </div>
@@ -83,9 +83,6 @@ export default function Tariff({
         <div className="flex flex-wrap mt-6 justify-between items-center gap-4">
           <div className="flex flex-col">
             <p className="text-[#EA004A] font-bold text-[24px]">${price}</p>
-            {/* <p className="text-[#6A7282] font-medium text-[16px] mt-[-8px] line-through">
-            1,500,000 UZS
-            </p> */}
           </div>
           <button
             onClick={() => setShowBookModal(true)}

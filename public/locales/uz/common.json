@@ -80,5 +80,7 @@
     "available_tariffs": "Mavjud tariflar"
   },
   "guests": "Mehmonlar",
-  "no_feedbacks_yet": "Hozircha hech qanday fikr-mulohaza yo'q"
+  "no_feedbacks_yet": "Hozircha hech qanday fikr-mulohaza yo'q",
+  "reserve_now_pay_later": "Hozir band qiling, keyinroq to'lang",
+  "reserve_now_pay_later_desc": "Sayohat rejalaringizni moslashuvchan saqlang — o'rningizni band qiling va bugun hech narsa to'lamang."
 }

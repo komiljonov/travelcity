@@ -96,7 +96,7 @@ export default function CheckBox({ tour }: { tour: ITour }) {
         <div className="grid min-w-0 grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6 items-start">
           {/* LEFT: Tour card */}
           <FormProvider {...methods}>
-            <div className="min-w-0 lg:col-span-2 flex flex-col">
+            <div className="min-w-0 lg:col-span-2 flex flex-col gap-6">
               {tariffs?.map((tariff) => {
                 return <Tariff key={tariff.id} tour={tour} tariff={tariff} />;
               })}

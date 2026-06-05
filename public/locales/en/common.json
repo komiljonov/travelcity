@@ -79,5 +79,7 @@
     "available_tariffs": "Available tariffs"
   },
   "guests": "Guests",
-  "no_feedbacks_yet": "No feedbacks yet"
+  "no_feedbacks_yet": "No feedbacks yet",
+  "reserve_now_pay_later": "Reserve now & pay later",
+  "reserve_now_pay_later_desc": "Keep your travel plans flexible — book your spot and pay nothing today."
 }

@@ -25,8 +25,14 @@ export default function TextSectiona({ tour }: { tour: ITour }) {
           </h2>
           <div>
             {/* Free cancellation */}
-            <div className="mt-6 flex   gap-3 items-start">
-              <Image src={"/icon/svg1.svg"} width={24} height={24} alt="a" />
+            <div className="mt-6 flex gap-3 items-start ">
+              <Image
+                src={"/icon/svg1.svg"}
+                width={24}
+                height={24}
+                alt="a"
+                className="mt-1"
+              />
               <span>
                 <h1 className="font-semibold text-[18px] leading-[28px] tracking-[0px]">
                   {/* Free cancellation */}
@@ -40,8 +46,14 @@ export default function TextSectiona({ tour }: { tour: ITour }) {
             </div>
 
             {/* Host or greeter */}
-            <div className="mt-6 flex   gap-3 items-start">
-              <Image src={"/icon/svg2.svg"} width={24} height={24} alt="a" />
+            <div className="mt-6 flex gap-3 items-start">
+              <Image
+                src={"/icon/svg2.svg"}
+                width={24}
+                height={24}
+                alt="a"
+                className="mt-1"
+              />
               <span>
                 <h1 className="font-semibold text-[18px] leading-[28px] tracking-[0px]">
                   {/* Host or greeter */}
@@ -55,8 +67,14 @@ export default function TextSectiona({ tour }: { tour: ITour }) {
             </div>
 
             {/* Duration */}
-            <div className="mt-6 flex   gap-3 items-start">
-              <Image src={"/icon/svg3.svg"} width={24} height={24} alt="a" />
+            <div className="mt-6 flex gap-3 items-start">
+              <Image
+                src={"/icon/svg3.svg"}
+                width={24}
+                height={24}
+                alt="a"
+                className="mt-1"
+              />
               <span>
                 <h1 className="font-semibold text-[18px] leading-[28px] tracking-[0px]">
                   {t("duration")}: {tour.duration_title}
@@ -64,6 +82,25 @@ export default function TextSectiona({ tour }: { tour: ITour }) {
                 <p className="text-[#6A7282] font-medium text-[16px] leading-[24px] tracking-[0px] mt-2">
                   {/* Check availability to see starting times */}
                   {t("duration_desc")}
+                </p>
+              </span>
+            </div>
+
+            <div className="mt-6 flex gap-3 items-start">
+              <Image
+                src={"/icon/credit_card.svg"}
+                width={24}
+                height={24}
+                alt="a"
+                className="mt-1"
+              />
+              <span>
+                <h1 className="font-semibold text-[18px] leading-[28px] tracking-[0px]">
+                  {t("reserve_now_pay_later")}
+                </h1>
+                <p className="text-[#6A7282] font-medium text-[16px] leading-[24px] tracking-[0px] mt-2">
+                  {/* Check availability to see starting times */}
+                  {t("reserve_now_pay_later_desc")}
                 </p>
               </span>
             </div>

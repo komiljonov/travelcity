@@ -397,7 +397,8 @@ export default function CityDetailWidget({ tour }: { tour: ITour }) {
         {getField(tour, "name")}
       </h1>
       <p className="text-gray-500 text-sm mt-1 max-md:text-xs">
-        {"120 review"} • {getField(tour, "duration_title")}
+        {t("tour.reviews", { count: tour.feedback_count })} •{" "}
+        {getField(tour, "duration_title")}
       </p>
 
       <div className="grid min-w-0 grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6 items-start">
