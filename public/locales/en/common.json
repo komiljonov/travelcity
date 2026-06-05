@@ -78,5 +78,6 @@
   "order": {
     "available_tariffs": "Available tariffs"
   },
-  "guests": "Guests"
+  "guests": "Guests",
+  "no_feedbacks_yet": "No feedbacks yet"
 }

@@ -82,5 +82,6 @@
   "order": {
     "available_tariffs": "Доступные тарифы"
   },
-  "guests": "Гости"
+  "guests": "Гости",
+  "no_feedbacks_yet": "Отзывов пока нет."
 }

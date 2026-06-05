@@ -79,5 +79,6 @@
   "order": {
     "available_tariffs": "Mavjud tariflar"
   },
-  "guests": "Mehmonlar"
+  "guests": "Mehmonlar",
+  "no_feedbacks_yet": "Hozircha hech qanday fikr-mulohaza yo'q"
 }
