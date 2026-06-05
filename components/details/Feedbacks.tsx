@@ -23,6 +23,11 @@ export default function Feedbacks({ tour }: { tour: ITour }) {
       <h1 className="font-bold text-[24px] leading-8 tracking-normal mt-10 mb-6 max-md:text-[18px]">
         {t("feedbacks")}
       </h1>
+
+      {feedbacks?.results && feedbacks.results.length === 0 && (
+        <p className="text-[#6A7282] text-[16px]">{t("no_feedbacks_yet")}</p>
+      )}
+
       {feedbacks?.results.map((fb, idx) => {
         // const avatarSrc = fb.media?.[0]?.media || "/person.png";
         const avatarSrc = fb.consumer_image;

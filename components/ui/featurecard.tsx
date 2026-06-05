@@ -34,14 +34,15 @@ export default function FeatureCard({ tour }: { tour: ITour }) {
             height={228}
             alt={tour.name}
           />
-        </motion.div>
 
+        </motion.div>
         <div className="p-4">
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="font-semibold text-[18px] text-[#1E2939] mb-2 h-[54px]"
+            // className="font-semibold text-[15px] text-[#1E2939] mb-2 line-clamp-2 min-h-[54px] [font-size:clamp(13px,1.5vw,15px)]"
+            className="font-semibold text-[15px] text-[#1E2939] mb-2 line-clamp-2 min-h-[48px]"
           >
             {getField(tour, "name")}
           </motion.h1>

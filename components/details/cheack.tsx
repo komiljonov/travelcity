@@ -26,15 +26,18 @@ export default function Cheack({ tour }: { tour: ITour }) {
               const displayText = isExclude
                 ? line.trimStart().slice(1).trimStart()
                 : line.trimStart();
+              const isEmpty = displayText.trim() === "";
 
               return (
                 <span key={idx} className="flex gap-2">
-                  <Image
-                    src={isExclude ? "/icon/X.svg" : "/icon/Check.svg"}
-                    width={24}
-                    height={24}
-                    alt="?"
-                  />
+                  {!isEmpty && (
+                    <Image
+                      src={isExclude ? "/icon/X.svg" : "/icon/Check.svg"}
+                      width={24}
+                      height={24}
+                      alt="?"
+                    />
+                  )}
                   <p className="font-medium text-[16px] leading-6 tracking-[0%]">
                     {displayText}
                   </p>

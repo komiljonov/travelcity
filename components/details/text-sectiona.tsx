@@ -14,7 +14,7 @@ export default function TextSectiona({ tour }: { tour: ITour }) {
           <h1 className="font-bold mt-10 text-[24px] leading-[32px] tracking-[0px] max-md:text-[18px]">
             {t("description")}
           </h1>
-          <p className="text-[#6A7282] font-medium text-[16px] leading-[24px] tracking-[0px] w-full max-w-[847px] mt-6 max-md:text-[14px]">
+          <p className="text-[#6A7282] font-medium text-[16px] leading-[24px] tracking-[0px] w-full max-w-[847px] mt-6 max-md:text-[14px] whitespace-pre-wrap">
             {getField(tour, "description")}
           </p>
         </div>
@@ -24,20 +24,6 @@ export default function TextSectiona({ tour }: { tour: ITour }) {
             {t("tour.about_this_activity")}
           </h2>
           <div>
-            {/* {tour.aboutActivity.map((item, idx) => (
-                          <div key={idx} className='mt-6 flex   gap-3 items-start'>
-                            <Image src={item.iconSrc} width={24} height={24} alt='a' />
-                            <span>
-                                <h1 className='font-semibold text-[18px] leading-[28px] tracking-[0px]'>
-                                  {item.title}
-                                </h1>
-                                <p className='text-[#6A7282] font-medium text-[16px] leading-[24px] tracking-[0px] mt-2'>
-                                  {item.text}
-                                </p>
-                            </span>
-                          </div>
-                        ))} */}
-
             {/* Free cancellation */}
             <div className="mt-6 flex   gap-3 items-start">
               <Image src={"/icon/svg1.svg"} width={24} height={24} alt="a" />
