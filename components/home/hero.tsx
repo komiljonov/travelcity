@@ -27,7 +27,7 @@ export default function Hero() {
       style={{
         backgroundImage: data
           ? `url(${getField(data, "home_main_image")})`
-          : `url(/header.png)`,
+          : `url(/header.webp)`,
       }}
     >
       <div className="max-w-7xl m-auto">
@@ -74,7 +74,7 @@ export default function Hero() {
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 1.5, delay: 0.8 }}
         className="absolute bottom-0 w-full"
-        src="/headerdark.png"
+        src="/headerdark.webp"
         alt=""
       />
     </div>
